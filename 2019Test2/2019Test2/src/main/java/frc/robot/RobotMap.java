@@ -35,13 +35,23 @@ public class RobotMap {
   public static Encoder armEncoder1 = new Encoder(0, 1, false, Encoder.EncodingType.k4X);
   public static Encoder armEncoder2;
   
-  public static final int[] canID = {3, 2, 0, 1}; 
+  public static final int[] canID = {0, 1, 2, 3}; 
+
+  // This set for main robot. Be sure to comment out the practice robot definitions when running main bot.
+  public static CANSparkMax frontLeftMotor  = new CANSparkMax(canID[1], MotorType.kBrushless);//check id-must set can id, change accordingly
+  
+  public static CANSparkMax backLeftMotor = new CANSparkMax(canID[0], MotorType.kBrushless);
+  
+  public static CANSparkMax frontRightMotor = new CANSparkMax(canID[2], MotorType.kBrushless);
+  public static CANSparkMax backRightMotor = new CANSparkMax(canID[3], MotorType.kBrushless);
+
+  // This set for practice robot. Be sure to comment out the main robot definitions when running practice bot.
+  /*
   public static CANSparkMax frontLeftMotor  = new CANSparkMax(canID[3], MotorType.kBrushless);//check id-must set can id, change accordingly
   public static CANSparkMax backLeftMotor = new CANSparkMax(canID[2], MotorType.kBrushless);
   public static CANSparkMax frontRightMotor = new CANSparkMax(canID[0], MotorType.kBrushless);
   public static CANSparkMax backRightMotor = new CANSparkMax(canID[1], MotorType.kBrushless);
-
-    
+  */  
 
      public static SpeedControllerGroup leftMotorGroup = new SpeedControllerGroup(frontLeftMotor, backLeftMotor);
      public static SpeedControllerGroup rightMotorGroup = new SpeedControllerGroup(frontRightMotor, backRightMotor);

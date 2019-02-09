@@ -82,17 +82,12 @@ public class Robot extends TimedRobot {
     //RobotMap.backLeftMotor.setInverted(true);
     RobotMap.encoder0 = RobotMap.frontRightMotor.getEncoder();
     RobotMap.encoder3 = RobotMap.frontLeftMotor.getEncoder();
-    //startPosition = RobotMap.encoder0.getPosition();
-    
-    
-    
-    
+
     
   }
-
-
-  /**
-   * This function is called every robot packet, no matter the mode. Use
+    //startPosition = RobotMap.encoder0.getPosition();
+    
+   /* 
    * this for items like diagnostics that you want ran during disabled,
    * autonomous, teleoperated and test.
    *
@@ -168,7 +163,7 @@ public class Robot extends TimedRobot {
      System.out.println("IM IN ELSE");
     }
 
-    RobotMap.dDrive.arcadeDrive(m_oi.driveStick.getRawAxis(1)*.5,m_oi.driveStick.getRawAxis(4)*0.5);
+    RobotMap.dDrive.arcadeDrive(-m_oi.driveStick.getRawAxis(1)*.5,m_oi.driveStick.getRawAxis(4)*0.5);
 
 
   }
@@ -221,7 +216,7 @@ public class Robot extends TimedRobot {
     System.out.println("3vEncoder Position: " + RobotMap.encoder3.getVelocity());*/
 
 
-    RobotMap.dDrive.arcadeDrive(m_oi.driveStick.getRawAxis(1)*.5,m_oi.driveStick.getRawAxis(4)*.5);
+    RobotMap.dDrive.arcadeDrive(-m_oi.driveStick.getRawAxis(1)*.5,m_oi.driveStick.getRawAxis(4)*.5);
     
 
     double Kp = -0.06;
