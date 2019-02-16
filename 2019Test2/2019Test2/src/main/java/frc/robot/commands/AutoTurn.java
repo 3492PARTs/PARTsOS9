@@ -8,9 +8,17 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
+import frc.robot.RobotMap;
+import frc.robot.subsystems.Encoder;
 
-public class AutoTurnSlightRight extends Command {
-  public AutoTurnSlightRight() {
+public class AutoTurn extends Command {
+  private double direction;
+  private Encoder encoder;
+  private double rotations;
+  public AutoTurn(double direction, double rotations) {
+    this.direction = direction;
+    encoder = new Encoder();
+    this.rotations = rotations;
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
   }
@@ -18,17 +26,20 @@ public class AutoTurnSlightRight extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
+    encoder.resetAll();
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
+    RobotMap.dDrive.arcadeDrive(0, .3*direction);
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return false;
+
+    return encoder.getEncoderValue0() >= rotations && encoder.getEncoderValue1() >= rotations;
   }
 
   // Called once after isFinished returns true

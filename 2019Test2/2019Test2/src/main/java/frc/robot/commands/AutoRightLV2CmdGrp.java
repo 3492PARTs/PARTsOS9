@@ -14,10 +14,16 @@ public class AutoRightLV2CmdGrp extends CommandGroup {
    * Add your docs here.
    */
   public AutoRightLV2CmdGrp() {
-    addSequential(new AutoFwd(-81));
-    addSequential(new AutoSeekRight());
-    addSequential(new AutoAim());
-    
+    addSequential(new AutoFwd(-81));//encoders are inverted? so need to have negative value for fwd
+    addSequential(new AutoSeekAimDestroy(1, 5)); //seekDirection, destroyRotations
+    addSequential(new AutoFwd(-10));
+    addSequential(new AutoDeployHatch());
+    addSequential(new AutoTurn(1,5)); //direction, rotations
+    addSequential(new AutoSeekAimDestroy(1, 5)); //seekDirection, destroyRotations
+
+
+
+
     // Add Commands here:
     // e.g. addSequential(new Command1());
     // addSequential(new Command2());

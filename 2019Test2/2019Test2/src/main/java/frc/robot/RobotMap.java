@@ -30,6 +30,7 @@ public class RobotMap {
   //Solenoid 
   public static Compressor c = new Compressor (0);
   public static DoubleSolenoid solenoidSteve = new DoubleSolenoid(3, 2);
+  public static DoubleSolenoid solenoidStan = new DoubleSolenoid(1, 0); //TODO: change values
   public static Encoder armEncoder1 = new Encoder(0, 1, false, Encoder.EncodingType.k4X);
   public static Encoder armEncoder2;
   

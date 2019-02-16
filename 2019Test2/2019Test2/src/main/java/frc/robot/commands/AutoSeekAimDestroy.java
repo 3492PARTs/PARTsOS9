@@ -13,11 +13,16 @@ import frc.robot.subsystems.LimeLight;
 
 public class AutoSeekAimDestroy extends Command {
   private LimeLight limeLight;
+  private double seekDirection; 
+  private double destroyRotations;
+  private AutoSeekAimDestroyCmdGrp autoSeekAimDestroyCmdGrp;
 
-  public AutoSeekAimDestroy() {
+  public AutoSeekAimDestroy(double seekDirection, double destroyRotations) {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
     limeLight = new LimeLight();
+    this.seekDirection = seekDirection;
+    this.destroyRotations = destroyRotations;
   }
 
   // Called just before this Command runs the first time
@@ -28,7 +33,8 @@ public class AutoSeekAimDestroy extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    new AutoSeekAimDestroyCmdGrp().start();
+    autoSeekAimDestroyCmdGrp = new AutoSeekAimDestroyCmdGrp(seekDirection, destroyRotations);
+    autoSeekAimDestroyCmdGrp.start();
   }
 
   // Make this return true when this Command no longer needs to run execute()
