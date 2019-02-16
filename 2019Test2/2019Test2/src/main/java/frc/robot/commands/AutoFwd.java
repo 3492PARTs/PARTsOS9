@@ -9,17 +9,19 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.*;
+import frc.robot.subsystems.Encoder;
 
 
 public class AutoFwd extends Command {
 
-  double startingEncPosition;
-  
+  private Encoder encoder;
+  private double rotations;
 
-  public AutoFwd() {
+  public AutoFwd(double rotations) {
     // Use requires() here to declare subsystem dependencies
     // eg. require = s(chassis);
     requires(Robot.m_subsystem);
+    this.rotations = rotations;
      
 
   }
@@ -27,8 +29,8 @@ public class AutoFwd extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    startingEncPosition = RobotMap.encoder0.getPosition();
-    
+    encoder = new Encoder();
+    encoder.resetAll();
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -42,7 +44,7 @@ public class AutoFwd extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return (RobotMap.encoder0.getPosition() - startingEncPosition < -81);
+    return (encoder.getEncoderValue0() < rotations && encoder.getEncoderValue1() < rotations);
   }
 
   // Called once after isFinished returns true

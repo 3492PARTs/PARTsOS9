@@ -81,8 +81,7 @@ public class Robot extends TimedRobot {
     RobotMap.c.setClosedLoopControl(true);
     //RobotMap.frontLeftMotor.setInverted(true);
     //RobotMap.backLeftMotor.setInverted(true);
-    RobotMap.encoder0 = RobotMap.frontRightMotor.getEncoder();
-    RobotMap.encoder3 = RobotMap.frontLeftMotor.getEncoder();
+    //TODO: SHIFT LOW GEAR
 
     
   }

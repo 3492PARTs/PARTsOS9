@@ -13,7 +13,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
-public class AutoAim extends Command {
+public class AutoDESTROY extends Command {
   NetworkTableEntry tx;
   NetworkTableEntry ty;
   NetworkTableEntry ta;
@@ -21,7 +21,7 @@ public class AutoAim extends Command {
   double x,y,area,v;
   double KpDistance;
 
-  public AutoAim() {
+  public AutoDESTROY() {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
     
@@ -53,32 +53,35 @@ public class AutoAim extends Command {
     KpDistance = -0.1;
     double leftCommand = 0;
     double rightCommand = 0;
-    double steering_adjust = 0;
-    double min_command = -0.03;
-    double heading_error = -x;
-    double Kp = -0.06;
-
-    if(x > 1.0){
-      steering_adjust = Kp * heading_error - min_command;
-      
-       
-    }
-    else if (x < 1.0){
-      steering_adjust = Kp * heading_error + min_command;
-      
-       
-    }
-    leftCommand += steering_adjust;
-    rightCommand -= steering_adjust;
-    RobotMap.dDrive.tankDrive(leftCommand*.75,rightCommand*.75);     
+    double distanceAdjust = 0;
+    double KpAim = -0.1;
+    double minAimCommand = 0.05;
+    double headingError = -x;
+    double distanceError = -y;
+    double steeringAdjust = 0.0;
     
+    if(x > 1.0){
+      steeringAdjust = KpAim * headingError - minAimCommand;
+    }
+    else if(x < -1.0){
+    
+    steeringAdjust = KpAim * headingError + minAimCommand; 
+    }
+    distanceAdjust = KpDistance * distanceError;
+    leftCommand += steeringAdjust + distanceAdjust;
+    rightCommand -= steeringAdjust + distanceAdjust;
+    //The multiplier for the speed here does NOT make the actual speed go down by that much.
+
+    RobotMap.dDrive.tankDrive((-leftCommand)*.3,(rightCommand)*.3);
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-
-    return x > -1 && x < 1;
+    return RobotMap.frontLeftMotor.get() == 0 && 
+    RobotMap.backLeftMotor.get() == 0 && 
+    RobotMap.frontRightMotor.get() == 0 && 
+    RobotMap.backRightMotor.get() == 0;
   }
 
   // Called once after isFinished returns true

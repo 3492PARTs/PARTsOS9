@@ -30,8 +30,6 @@ public class RobotMap {
   //Solenoid 
   public static Compressor c = new Compressor (0);
   public static DoubleSolenoid solenoidSteve = new DoubleSolenoid(3, 2);
-  public static CANEncoder encoder0;
-  public static CANEncoder encoder3;
   public static Encoder armEncoder1 = new Encoder(0, 1, false, Encoder.EncodingType.k4X);
   public static Encoder armEncoder2;
   
@@ -44,6 +42,8 @@ public class RobotMap {
   
   public static CANSparkMax frontRightMotor = new CANSparkMax(canID[2], MotorType.kBrushless);
   public static CANSparkMax backRightMotor = new CANSparkMax(canID[3], MotorType.kBrushless);
+  public static CANEncoder encoder0 = RobotMap.frontRightMotor.getEncoder();
+  public static CANEncoder encoder1 = RobotMap.frontLeftMotor.getEncoder();
 
   // This set for practice robot. Be sure to comment out the main robot definitions when running practice bot.
   /*
@@ -53,34 +53,34 @@ public class RobotMap {
   public static CANSparkMax backRightMotor = new CANSparkMax(canID[1], MotorType.kBrushless);
   */  
 
-     public static SpeedControllerGroup leftMotorGroup = new SpeedControllerGroup(frontLeftMotor, backLeftMotor);
-     public static SpeedControllerGroup rightMotorGroup = new SpeedControllerGroup(frontRightMotor, backRightMotor);
-     public static DifferentialDrive dDrive = new DifferentialDrive(leftMotorGroup, rightMotorGroup);
+  public static SpeedControllerGroup leftMotorGroup = new SpeedControllerGroup(frontLeftMotor, backLeftMotor);
+  public static SpeedControllerGroup rightMotorGroup = new SpeedControllerGroup(frontRightMotor, backRightMotor);
+  public static DifferentialDrive dDrive = new DifferentialDrive(leftMotorGroup, rightMotorGroup);
 
   //speed controllergroup
 
   
 
-  
+
   
 
   public static void init(){
    
-     //encoder
-     
-     /*frontLeftMotor  = new CANSparkMax(canID[0], MotorType.kBrushless);//check id-must set can id, change accordingly
-     backLeftMotor = new CANSparkMax(canID[1], MotorType.kBrushless);
-     frontRightMotor = new CANSparkMax(canID[2], MotorType.kBrushless);
-     backRightMotor = new CANSparkMax(canID[3], MotorType.kBrushless);
-     
+    //encoder
+    
+    /*frontLeftMotor  = new CANSparkMax(canID[0], MotorType.kBrushless);//check id-must set can id, change accordingly
+    backLeftMotor = new CANSparkMax(canID[1], MotorType.kBrushless);
+    frontRightMotor = new CANSparkMax(canID[2], MotorType.kBrushless);
+    backRightMotor = new CANSparkMax(canID[3], MotorType.kBrushless);
+    
 
-     frontLeftMotor.setInverted(true);
-     backLeftMotor.setInverted(true);
+    frontLeftMotor.setInverted(true);
+    backLeftMotor.setInverted(true);
 
-     SpeedControllerGroup leftMotorGroup = new SpeedControllerGroup(frontLeftMotor, backLeftMotor);
-     SpeedControllerGroup rightMotorGroup = new SpeedControllerGroup(frontRightMotor, backRightMotor);
-     dDrive = new DifferentialDrive(leftMotorGroup, rightMotorGroup);
-*/
+    SpeedControllerGroup leftMotorGroup = new SpeedControllerGroup(frontLeftMotor, backLeftMotor);
+    SpeedControllerGroup rightMotorGroup = new SpeedControllerGroup(frontRightMotor, backRightMotor);
+    dDrive = new DifferentialDrive(leftMotorGroup, rightMotorGroup);
+    */
     
   
 
