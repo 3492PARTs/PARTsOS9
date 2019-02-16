@@ -8,31 +8,24 @@
 package frc.robot.commands;
 
 import frc.robot.*;
+import frc.robot.subsystems.Encoder;
+import frc.robot.subsystems.LimeLight;
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
 
 public class AutoDESTROY extends Command {
-  NetworkTableEntry tx;
-  NetworkTableEntry ty;
-  NetworkTableEntry ta;
-  NetworkTableEntry tv;
-  double x,y,area,v;
-  double KpDistance;
+  private LimeLight limeLight;
+  private double KpDistance;
+  private Encoder encoder;
+  private double rotations;
 
-  public AutoDESTROY() {
+
+  public AutoDESTROY(double rotations) {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
-    
-  NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
-  tx = table.getEntry("tx");
-  ty = table.getEntry("ty");
-  ta = table.getEntry("ta");
-  tv = table.getEntry("tv");
-  
- 
-   
+    limeLight = new LimeLight(); 
+    encoder = new Encoder(); 
+    this.rotations = rotations; 
+
   }
 
   // Called just before this Command runs the first time
@@ -45,25 +38,21 @@ public class AutoDESTROY extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() { 
-    x = tx.getDouble(0.0);
-    y = ty.getDouble(0.0);
-    area = ta.getDouble(0.0);
-    v = tv.getDouble(0.0);
-
+    
     KpDistance = -0.1;
     double leftCommand = 0;
     double rightCommand = 0;
     double distanceAdjust = 0;
     double KpAim = -0.1;
     double minAimCommand = 0.05;
-    double headingError = -x;
-    double distanceError = -y;
+    double headingError = -limeLight.getX();
+    double distanceError = -limeLight.getY();
     double steeringAdjust = 0.0;
     
-    if(x > 1.0){
+    if(limeLight.getX() > 1.0){
       steeringAdjust = KpAim * headingError - minAimCommand;
     }
-    else if(x < -1.0){
+    else if(limeLight.getX() < -1.0){
     
     steeringAdjust = KpAim * headingError + minAimCommand; 
     }
@@ -78,15 +67,19 @@ public class AutoDESTROY extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return RobotMap.frontLeftMotor.get() == 0 && 
+    return (RobotMap.frontLeftMotor.get() == 0 && 
     RobotMap.backLeftMotor.get() == 0 && 
     RobotMap.frontRightMotor.get() == 0 && 
-    RobotMap.backRightMotor.get() == 0;
+    RobotMap.backRightMotor.get() == 0) 
+    ||
+    (encoder.getEncoderValue0() >= rotations && 
+    encoder.getEncoderValue1() >= rotations);
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
+    RobotMap.dDrive.arcadeDrive(0, 0);
   }
 
   // Called when another command which requires one or more of the same

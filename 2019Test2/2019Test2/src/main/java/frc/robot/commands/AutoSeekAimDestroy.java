@@ -8,40 +8,39 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
-import frc.robot.*;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
+import frc.robot.RobotMap;
+import frc.robot.subsystems.LimeLight;
 
-public class AutoDeployHatch extends Command {
+public class AutoSeekAimDestroy extends Command {
+  private LimeLight limeLight;
 
-private long exeTime;
-
-  public AutoDeployHatch() {
+  public AutoSeekAimDestroy() {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
+    limeLight = new LimeLight();
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    exeTime = System.currentTimeMillis();
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    RobotMap.solenoidSteve.set(DoubleSolenoid.Value.kForward);
+    new AutoSeekAimDestroyCmdGrp().start();
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return System.currentTimeMillis() >= exeTime + 1000;
+    return limeLight.getX() > -1 && limeLight.getX() < 1;
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    RobotMap.solenoidSteve.set(DoubleSolenoid.Value.kReverse);
+    RobotMap.dDrive.arcadeDrive(0, 0);
   }
 
   // Called when another command which requires one or more of the same

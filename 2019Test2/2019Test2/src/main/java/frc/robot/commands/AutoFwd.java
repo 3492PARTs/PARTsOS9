@@ -22,14 +22,13 @@ public class AutoFwd extends Command {
     // eg. require = s(chassis);
     requires(Robot.m_subsystem);
     this.rotations = rotations;
-     
+    encoder = new Encoder(); 
 
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    encoder = new Encoder();
     encoder.resetAll();
   }
 
