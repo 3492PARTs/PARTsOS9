@@ -1,3 +1,4 @@
+
 /*----------------------------------------------------------------------------*/
 /* Copyright (c) 2017-2018 FIRST. All Rights Reserved.                        */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
@@ -12,7 +13,6 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.commands.ExampleCommand;
 import frc.robot.subsystems.ExampleSubsystem;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import frc.robot.commands.*;
@@ -33,7 +33,7 @@ public class Robot extends TimedRobot {
   public static OI m_oi;
 
   
-  //Command EncoderTest;
+  
 
   Command m_autonomousCommand;
   SendableChooser<Command> m_chooser = new SendableChooser<>();
@@ -67,15 +67,16 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    encoderTest = new EncoderTest();
+     
     //network table
 
+    encoderTest.start();
 
 
-    setPositionRight = 30;
+    
     m_oi = new OI();
-    m_chooser.setDefaultOption("Default Auto", new ExampleCommand());
-    // chooser.addOption("My Auto", new MyAutoCommand());
+    m_chooser.setDefaultOption("Default Auto", new AutoFwd());
+    //m_chooser.addOption("Right, Level 2", new AutoRightL2());
     SmartDashboard.putData("Auto mode", m_chooser);
     RobotMap.c.setClosedLoopControl(true);
     //RobotMap.frontLeftMotor.setInverted(true);
@@ -115,6 +116,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
+    
     Scheduler.getInstance().run();
   }
 
@@ -133,6 +135,7 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     m_autonomousCommand = m_chooser.getSelected();
     
+    
     /*
      * String autoSelected = SmartDashboard.getString("Auto Selector",
      * "Default"); switch(autoSelected) { case "My Auto": autonomousCommand
@@ -141,6 +144,7 @@ public class Robot extends TimedRobot {
      */
 
     // schedule the autonomous command (example)
+    
     if (m_autonomousCommand != null) {
       m_autonomousCommand.start();
     }
@@ -152,18 +156,18 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
     Scheduler.getInstance().run();
-    encoderTest.start();
+  
     System.out.println("IM IN AUTO");
-    if(encoderTest.currentPositionRight <= setPositionRight){
+    /*if(encoderTest.currentPositionRight <= setPositionRight){
       RobotMap.dDrive.arcadeDrive(-.25, 0);
       System.out.println("IM SUPPOSED TO BE DRIVING");
     }
     else {
      RobotMap.dDrive.arcadeDrive(0, 0);
      System.out.println("IM IN ELSE");
-    }
+    }*/
 
-    RobotMap.dDrive.arcadeDrive(-m_oi.driveStick.getRawAxis(1)*.5,m_oi.driveStick.getRawAxis(4)*0.5);
+    
 
 
   }
@@ -204,19 +208,23 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("LimelightArea", area);
     SmartDashboard.putNumber("Target Valid", v);
     
-    //encoderTest.start();
-    /*SmartDashboard.putNumber("Encoder Position", RobotMap.encoder0.getPosition());
-    System.out.println("Encoder Position: " + RobotMap.encoder0.getPosition());
-    SmartDashboard.putNumber("vEncoder Position", RobotMap.encoder0.getVelocity());
-    System.out.println("vEncoder Position: " + RobotMap.encoder0.getVelocity());
+    encoderTest.start();
+    SmartDashboard.putNumber("Encoder Position", -RobotMap.encoder0.getPosition());
+    System.out.println("Encoder Position: " + -RobotMap.encoder0.getPosition());
+    SmartDashboard.putNumber("velocity", RobotMap.encoder0.getVelocity());
+    //System.out.println("vEncoder Position: " + RobotMap.encoder0.getVelocity());
 
-    SmartDashboard.putNumber("3Encoder Position", -1*(RobotMap.encoder3.getPosition()));
+   /* SmartDashboard.putNumber("3Encoder Position", -1*(RobotMap.encoder3.getPosition()));
     System.out.println("3Encoder Position: " + RobotMap.encoder3.getPosition());
     SmartDashboard.putNumber("3vEncoder Position", -1*(RobotMap.encoder3.getVelocity()));
     System.out.println("3vEncoder Position: " + RobotMap.encoder3.getVelocity());*/
 
+    //send info to the console as to whether the compressor thinks it is on or off
+    System.out.println("The compressor thinks it's on:  " + RobotMap.c.enabled()); 
+    System.out.println("The pressure switch value is: " + RobotMap.c.getPressureSwitchValue());
+    System.out.println("The compressor current is: " + RobotMap.c.getCompressorCurrent());
 
-    RobotMap.dDrive.arcadeDrive(-m_oi.driveStick.getRawAxis(1)*.5,m_oi.driveStick.getRawAxis(4)*.5);
+    RobotMap.dDrive.arcadeDrive(-m_oi.driveStick.getRawAxis(1)*.8,m_oi.driveStick.getRawAxis(4)*.5);
     
 
     double Kp = -0.06;
@@ -225,7 +233,7 @@ public class Robot extends TimedRobot {
     double rightCommand = 0;
     double steering_adjust = 0;
     double distanceAdjust = 0;
-    double desiredDistance = 120;
+  
 
     //RobotMap.dDrive.tankDrive(-m_oi.driveStick.getRawAxis(1)*0.5+leftCommand, -m_oi.driveStick.getRawAxis(5)*0.5+rightCommand);
 
@@ -312,20 +320,21 @@ public class Robot extends TimedRobot {
       distanceAdjust = KpDistance * distanceError;
       leftCommand += steeringAdjust + distanceAdjust;
       rightCommand -= steeringAdjust + distanceAdjust;
-      
-      RobotMap.dDrive.tankDrive((leftCommand)*.4,(-rightCommand)*.4);
+      //The multiplier for the speed here does NOT make the actual speed go down by that much.
+  
+      RobotMap.dDrive.tankDrive((-leftCommand)*.3,(rightCommand)*.3);
     }
 
     
 
 
-    if(m_oi.controlStick.getRawButton(4)){
+    if(m_oi.driveStick.getRawButton(1)){
       RobotMap.solenoidSteve.set(DoubleSolenoid.Value.kForward);
-    }
+    } 
 
-    if(m_oi.controlStick.getRawButton(3)){
+    if(m_oi.driveStick.getRawButton(2)){
       RobotMap.solenoidSteve.set(DoubleSolenoid.Value.kReverse);
-    }
+    }  
 
     if(m_oi.launchPad.getRawButton(3)){
       System.out.println("b1 works");
@@ -347,11 +356,7 @@ public class Robot extends TimedRobot {
       System.out.println("b5 works");
     }
 
-    //SmartDashboard.putNumber("Encoder Position", RobotMap.leftDriveEncoder.getPosition());
-
-
-  
-    
+     
 
 
 

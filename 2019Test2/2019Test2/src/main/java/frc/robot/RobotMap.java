@@ -29,7 +29,7 @@ import edu.wpi.first.wpilibj.Encoder;
 public class RobotMap {
   //Solenoid 
   public static Compressor c = new Compressor (0);
-  public static DoubleSolenoid solenoidSteve = new DoubleSolenoid(1,0);
+  public static DoubleSolenoid solenoidSteve = new DoubleSolenoid(3, 2);
   public static CANEncoder encoder0;
   public static CANEncoder encoder3;
   public static Encoder armEncoder1 = new Encoder(0, 1, false, Encoder.EncodingType.k4X);

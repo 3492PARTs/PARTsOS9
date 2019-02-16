@@ -2,7 +2,6 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.*;
-import edu.wpi.first.wpilibj.smartdashboard.*;
 
 /**
  * An example command.  You can replace me with your own command.
@@ -10,7 +9,7 @@ import edu.wpi.first.wpilibj.smartdashboard.*;
 public class EncoderTest extends Command {
     double startPositionRight;
     public double currentPositionRight;
-
+    double pos;
 
 
   public EncoderTest() {
@@ -26,6 +25,7 @@ public class EncoderTest extends Command {
   @Override
   protected void initialize() {
     startPositionRight = RobotMap.encoder0.getPosition();
+  
     System.out.println("StartPOsitionRibht Just got INITIALIZED!");
  
    
@@ -34,11 +34,18 @@ public class EncoderTest extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    System.out.println("start: " + startPositionRight);
-    SmartDashboard.putNumber("start", startPositionRight);
+    
+    //SmartDashboard.putNumber("start", startPositionRight);
     currentPositionRight = RobotMap.encoder0.getPosition() - startPositionRight;
-    SmartDashboard.putNumber("current", currentPositionRight);
+    //SmartDashboard.putNumber("current", currentPositionRight);
    
+  }
+
+  public double sendCurrentPostion(){
+      pos = currentPositionRight;
+      //SmartDashboard.putNumber("AutoEncoderPosition", pos);
+      return pos;
+      
   }
 
   // Make this return true when this Command no longer needs to run execute()
@@ -50,6 +57,7 @@ public class EncoderTest extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
+
   }
 
   // Called when another command which requires one or more of the same
