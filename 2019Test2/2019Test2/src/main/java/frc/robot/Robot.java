@@ -16,6 +16,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.ExampleSubsystem;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import frc.robot.commands.*;
+
+import com.ctre.phoenix.motorcontrol.ControlMode;
+
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -69,19 +72,19 @@ public class Robot extends TimedRobot {
   public void robotInit() {
      
     //network table
-
+    RobotMap.liftMotor2.set(ControlMode.Follower, 4);
+    RobotMap.intake2.set(ControlMode.Follower, 7);
     encoderTest.start();
-
-
-    
+    RobotMap.liftEncoder.setDistancePerPulse(1.3 * Math.PI);
+    RobotMap.armEncoder.setDistancePerPulse(100 * (35/12));
     m_oi = new OI();
-    m_chooser.setDefaultOption("Default Auto", new AutoFwd());
+    m_chooser.setDefaultOption("Default Auto", new AutoDriveStraight(1, 1));
     //m_chooser.addOption("Right, Level 2", new AutoRightL2());
     SmartDashboard.putData("Auto mode", m_chooser);
     RobotMap.c.setClosedLoopControl(true);
     //RobotMap.frontLeftMotor.setInverted(true);
     //RobotMap.backLeftMotor.setInverted(true);
-    //TODO: SHIFT LOW GEAR
+    RobotMap.solenoidStan.set(DoubleSolenoid.Value.kForward); //TODO: check if forward is low gear
 
     
   }

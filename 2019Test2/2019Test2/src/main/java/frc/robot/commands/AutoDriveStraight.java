@@ -12,16 +12,17 @@ import frc.robot.*;
 import frc.robot.subsystems.Encoder;
 
 
-public class AutoFwd extends Command {
+public class AutoDriveStraight extends Command {
 
   private Encoder encoder;
-  private double rotations;
-
-  public AutoFwd(double rotations) {
+  private double distance;
+  private double direction;
+  public AutoDriveStraight(double distance, double direction) {
     // Use requires() here to declare subsystem dependencies
     // eg. require = s(chassis);
     requires(Robot.m_subsystem);
-    this.rotations = rotations;
+    this.distance = distance;
+    this.direction = direction;
     encoder = new Encoder(); 
 
   }
@@ -35,15 +36,14 @@ public class AutoFwd extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    RobotMap.dDrive.arcadeDrive(0.6,0);
-     
+    RobotMap.dDrive.arcadeDrive(0.6 * direction, 0);
     
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return (encoder.getEncoderValue0() < rotations && encoder.getEncoderValue1() < rotations);
+    return (encoder.getEncoder0Distance() >= distance && encoder.getEncoder1Distance() >= distance);
   }
 
   // Called once after isFinished returns true
