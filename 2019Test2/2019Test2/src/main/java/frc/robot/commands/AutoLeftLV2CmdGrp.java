@@ -9,31 +9,28 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
-public class AutoRightLV2CmdGrp extends CommandGroup {
+public class AutoLeftLV2CmdGrp extends CommandGroup {
   /**
    * Add your docs here.
    */
-  public AutoRightLV2CmdGrp() {
+  public AutoLeftLV2CmdGrp() {
     addSequential(new AutoDriveStraight(-81, 1));//encoders are inverted? so need to have negative value for fwd
-    addSequential(new AutoSeekAimDestroy(1, 5)); //seekDirection, destroyRotations
+    addSequential(new AutoSeekAimDestroy(-1, 5)); //seekDirection, destroyRotations
     addSequential(new AutoDriveStraight(20, 1));
     addSequential(new AutoDeployHatch());
     addSequential(new AutoDriveStraight(10,-1));//distance, direction
-    addSequential(new AutoTurn(1,5)); //direction(assuming right is positive), rotations 
-    addSequential(new AutoSeekAimDestroy(1, 5)); //seekDirection, destroyRotations
+    addSequential(new AutoTurn(-1,5)); //direction(assuming right is positive), rotations 
+    addSequential(new AutoSeekAimDestroy(-1, 5)); //seekDirection, destroyRotations
     addSequential(new AutoDriveStraight(20, 1));
     addSequential(new AutoDriveStraight(10,-1));
-    addSequential(new AutoTurn(1, 5));
-    addSequential(new AutoSeekAimDestroy(1, 5));
+    addSequential(new AutoTurn(-1, 5));
+    addSequential(new AutoSeekAimDestroy(-1, 5));
     addSequential(new Lift(LiftLevel.Middle));
     addSequential(new AutoDriveStraight(10, 1));
     addSequential(new AutoDeployHatch());
     addSequential(new AutoDriveStraight(10, -1));
     addSequential(new Lift(LiftLevel.Low));
-    addSequential(new AutoTurn(-1, 5));
-
-
-
+    addSequential(new AutoTurn(1, 5));
 
     // Add Commands here:
     // e.g. addSequential(new Command1());

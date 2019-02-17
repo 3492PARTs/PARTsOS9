@@ -34,7 +34,7 @@ public class RobotMap {
   public static DoubleSolenoid solenoidSteve = new DoubleSolenoid(3, 2);
   public static DoubleSolenoid solenoidStan = new DoubleSolenoid(1, 0); //TODO: change values and this is gear shifter solenoid
   public static Encoder armEncoder = new Encoder(0, 1, false, Encoder.EncodingType.k4X);
-  public static Encoder liftEncoder = new Encoder(0, 1, false, Encoder.EncodingType.k4X);
+  public static Encoder liftEncoder = new Encoder(2, 3, false, Encoder.EncodingType.k4X);
   
   public static final int[] canID = {0, 1, 2, 3}; 
 

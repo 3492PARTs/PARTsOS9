@@ -40,7 +40,6 @@ public class Robot extends TimedRobot {
 
   Command m_autonomousCommand;
   SendableChooser<Command> m_chooser = new SendableChooser<>();
-  EncoderTest encoderTest;
   double setPositionRight;
 
   NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
@@ -74,7 +73,6 @@ public class Robot extends TimedRobot {
     //network table
     RobotMap.liftMotor2.set(ControlMode.Follower, 4);
     RobotMap.intake2.set(ControlMode.Follower, 7);
-    encoderTest.start();
     RobotMap.liftEncoder.setDistancePerPulse(1.3 * Math.PI);
     RobotMap.armEncoder.setDistancePerPulse(100 * (35/12));
     m_oi = new OI();
@@ -210,7 +208,6 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("LimelightArea", area);
     SmartDashboard.putNumber("Target Valid", v);
     
-    encoderTest.start();
     SmartDashboard.putNumber("Encoder Position", -RobotMap.encoder0.getPosition());
     System.out.println("Encoder Position: " + -RobotMap.encoder0.getPosition());
     SmartDashboard.putNumber("velocity", RobotMap.encoder0.getVelocity());
@@ -240,7 +237,7 @@ public class Robot extends TimedRobot {
     //RobotMap.dDrive.tankDrive(-m_oi.driveStick.getRawAxis(1)*0.5+leftCommand, -m_oi.driveStick.getRawAxis(5)*0.5+rightCommand);
 
     //AIMING AIMING AIMING AIMING
-    if(m_oi.driveStick.getRawButton(4)){  //Y
+   /* if(m_oi.driveStick.getRawButton(4)){  //Y
       double heading_error = -x;
       
       
@@ -295,7 +292,7 @@ public class Robot extends TimedRobot {
         }
         if (m_oi.driveStick.getRawAxis(4) > 0){
           RobotMap.dDrive.arcadeDrive(-0.3,leftCommand*.75);
-        }*/
+        }
         RobotMap.dDrive.tankDrive(leftCommand*.75,rightCommand*.75);  
         
       
@@ -326,7 +323,7 @@ public class Robot extends TimedRobot {
   
       RobotMap.dDrive.tankDrive((-leftCommand)*.3,(rightCommand)*.3);
     }
-
+    */
     
 
 
@@ -338,23 +335,47 @@ public class Robot extends TimedRobot {
       RobotMap.solenoidSteve.set(DoubleSolenoid.Value.kReverse);
     }  
 
-    if(m_oi.launchPad.getRawButton(3)){
+    if(m_oi.driveStick.getRawButton(3)){
+      RobotMap.armMotor.set(ControlMode.PercentOutput, 0.25);
+    }
+
+    if(m_oi.driveStick.getRawButton(4)){
+      RobotMap.armMotor.set(ControlMode.PercentOutput, -0.25);
+    }
+
+    if(m_oi.driveStick.getRawButton(5)){
+      RobotMap.intake.set(ControlMode.PercentOutput, 0.5);
+    }
+
+    if(m_oi.driveStick.getRawButton(6)){
+      RobotMap.intake.set(ControlMode.PercentOutput, -0.5);
+    }
+
+    if(m_oi.controlStick.getRawButton(3)){
+      RobotMap.liftMotor.set(ControlMode.PercentOutput, -0.5);
+    }
+
+    if(m_oi.controlStick.getRawButton(4)){
+      RobotMap.liftMotor.set(ControlMode.PercentOutput, 0.5);
+    }
+    
+    if(m_oi.launchPad.getRawButton(1)){
       System.out.println("b1 works");
     }
 
-    if(m_oi.launchPad.getRawButton(8)){
+    if(m_oi.launchPad.getRawButton(3)){
       System.out.println("b2 works");
     }
 
-    if(m_oi.launchPad.getRawButton(1)){
+    if(m_oi.launchPad.getRawButton(5)){
       System.out.println("b3 works");
     }
 
-    if(m_oi.launchPad.getRawButton(9)){
+    if(m_oi.launchPad.getRawButton(8)){
       System.out.println("b4 works");
     }
 
-    if(m_oi.launchPad.getRawButton(5)){
+    if(m_oi.launchPad.getRawButton(9)){
       System.out.println("b5 works");
     }
 
