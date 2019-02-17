@@ -72,13 +72,16 @@ public class Robot extends TimedRobot {
      
     //network table
     RobotMap.liftMotor2.set(ControlMode.Follower, 4);
-    RobotMap.intake2.set(ControlMode.Follower, 7);
+    RobotMap.intake2.set(ControlMode.Follower, 11);
     RobotMap.liftEncoder.setDistancePerPulse(1.3 * Math.PI);
     RobotMap.armEncoder.setDistancePerPulse(100 * (35/12));
     m_oi = new OI();
-    m_chooser.setDefaultOption("Default Auto", new AutoDriveStraight(1, 1));
-    //m_chooser.addOption("Right, Level 2", new AutoRightL2());
     SmartDashboard.putData("Auto mode", m_chooser);
+    m_chooser.setDefaultOption("Default Auto", new AutoDriveFwdCmdGrp());
+    m_chooser.addOption("RightRocketLV2Auto", new AutoRightLV2CmdGrp());
+    m_chooser.addOption("LeftRocketLV2Auto", new AutoLeftLV2CmdGrp());
+    m_chooser.addOption("CenterCargoAuto", new AutoCenterCmdGrp());
+    m_chooser.addOption("DoNothingAuto", new AutoDoNothingCmdGrp());    
     RobotMap.c.setClosedLoopControl(true);
     //RobotMap.frontLeftMotor.setInverted(true);
     //RobotMap.backLeftMotor.setInverted(true);
@@ -338,25 +341,31 @@ public class Robot extends TimedRobot {
     if(m_oi.driveStick.getRawButton(3)){
       RobotMap.armMotor.set(ControlMode.PercentOutput, 0.25);
     }
-
-    if(m_oi.driveStick.getRawButton(4)){
+    else if(m_oi.driveStick.getRawButton(4)){
       RobotMap.armMotor.set(ControlMode.PercentOutput, -0.25);
+    }
+    else{
+      RobotMap.armMotor.set(ControlMode.PercentOutput, 0);
     }
 
     if(m_oi.driveStick.getRawButton(5)){
       RobotMap.intake.set(ControlMode.PercentOutput, 0.5);
     }
-
-    if(m_oi.driveStick.getRawButton(6)){
+    else if(m_oi.driveStick.getRawButton(6)){
       RobotMap.intake.set(ControlMode.PercentOutput, -0.5);
+    }
+    else{
+      RobotMap.intake.set(ControlMode.PercentOutput, 0);
     }
 
     if(m_oi.controlStick.getRawButton(3)){
       RobotMap.liftMotor.set(ControlMode.PercentOutput, -0.5);
     }
-
-    if(m_oi.controlStick.getRawButton(4)){
+    else if(m_oi.controlStick.getRawButton(4)){
       RobotMap.liftMotor.set(ControlMode.PercentOutput, 0.5);
+    }
+    else{
+      RobotMap.liftMotor.set(ControlMode.PercentOutput, 0);
     }
     
     if(m_oi.launchPad.getRawButton(1)){
