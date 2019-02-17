@@ -51,10 +51,10 @@ public class RobotMap {
 
   //Lift motor - talon
   public static TalonSRX liftMotor = new TalonSRX(4);
-  public static TalonSRX liftMotor2 = new TalonSRX(5);
-  public static TalonSRX armMotor = new TalonSRX(6);
-  public static TalonSRX intake = new TalonSRX(7);
-  public static TalonSRX intake2 = new TalonSRX(8);
+  public static TalonSRX liftMotor2 = new TalonSRX(1);
+  public static TalonSRX armMotor = new TalonSRX(0);
+  public static TalonSRX intake = new TalonSRX(11);
+  public static TalonSRX intake2 = new TalonSRX(5);
 
 
   // This set for practice robot. Be sure to comment out the main robot definitions when running practice bot.
