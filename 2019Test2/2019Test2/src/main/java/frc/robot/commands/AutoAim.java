@@ -9,30 +9,15 @@ package frc.robot.commands;
 
 import frc.robot.*;
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
-
+import frc.robot.subsystems.*;
 public class AutoAim extends Command {
-  NetworkTableEntry tx;
-  NetworkTableEntry ty;
-  NetworkTableEntry ta;
-  NetworkTableEntry tv;
+  LimeLight limeLight = new LimeLight();
   double x,y,area,v;
   double KpDistance;
 
   public AutoAim() {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
-    
-  NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
-  tx = table.getEntry("tx");
-  ty = table.getEntry("ty");
-  ta = table.getEntry("ta");
-  tv = table.getEntry("tv");
-  
- 
-   
   }
 
   // Called just before this Command runs the first time
@@ -45,10 +30,10 @@ public class AutoAim extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() { 
-    x = tx.getDouble(0.0);
-    y = ty.getDouble(0.0);
-    area = ta.getDouble(0.0);
-    v = tv.getDouble(0.0);
+    x = limeLight.getX();
+    y = limeLight.getY();
+    area = limeLight.getArea();
+    v = limeLight.getV();
 
     KpDistance = -0.1;
     double leftCommand = 0;

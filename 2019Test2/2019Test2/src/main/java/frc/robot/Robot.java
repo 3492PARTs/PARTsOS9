@@ -18,10 +18,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import frc.robot.commands.*;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
+import frc.robot.subsystems.*;
 
 
 /**
@@ -41,19 +38,15 @@ public class Robot extends TimedRobot {
   Command m_autonomousCommand;
   SendableChooser<Command> m_chooser = new SendableChooser<>();
   double setPositionRight;
+  LimeLight limeLight = new LimeLight();
 
-  NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
-  NetworkTableEntry tx = table.getEntry("tx");
-  NetworkTableEntry ty = table.getEntry("ty");
-  NetworkTableEntry ta = table.getEntry("ta");
-  NetworkTableEntry tv = table.getEntry("tv");
   
   double KpDistance = -0.1;
    
 
   public double EstimateDistance() {
     double distance;
-    double y = ty.getDouble(0.0);
+    double y = limeLight.getY();
     SmartDashboard.putNumber("Angle of vertical offset is " , y);
     System.out.println("Angle of vertical offset is " + y);
    
@@ -201,10 +194,10 @@ public class Robot extends TimedRobot {
     //System.out.println("start: " + startPosition);
     Scheduler.getInstance().run();
 
-    double x = tx.getDouble(0.0);
-    double y = ty.getDouble(0.0);
-    double area = ta.getDouble(0.0);
-    double v = tv.getDouble(0.0);
+    double x = limeLight.getX();
+    double y = limeLight.getY();
+    double area = limeLight.getArea();
+    double v = limeLight.getV();
 
     SmartDashboard.putNumber("LimelightX", x);
     SmartDashboard.putNumber("LimelightY", y);
@@ -214,13 +207,6 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Encoder Position", -RobotMap.encoder0.getPosition());
     System.out.println("Encoder Position: " + -RobotMap.encoder0.getPosition());
     SmartDashboard.putNumber("velocity", RobotMap.encoder0.getVelocity());
-    //System.out.println("vEncoder Position: " + RobotMap.encoder0.getVelocity());
-
-   /* SmartDashboard.putNumber("3Encoder Position", -1*(RobotMap.encoder3.getPosition()));
-    System.out.println("3Encoder Position: " + RobotMap.encoder3.getPosition());
-    SmartDashboard.putNumber("3vEncoder Position", -1*(RobotMap.encoder3.getVelocity()));
-    System.out.println("3vEncoder Position: " + RobotMap.encoder3.getVelocity());*/
-
     //send info to the console as to whether the compressor thinks it is on or off
     System.out.println("The compressor thinks it's on:  " + RobotMap.c.enabled()); 
     System.out.println("The pressure switch value is: " + RobotMap.c.getPressureSwitchValue());
@@ -237,56 +223,38 @@ public class Robot extends TimedRobot {
     double distanceAdjust = 0;
   
 
-    //RobotMap.dDrive.tankDrive(-m_oi.driveStick.getRawAxis(1)*0.5+leftCommand, -m_oi.driveStick.getRawAxis(5)*0.5+rightCommand);
+    
 
     //AIMING AIMING AIMING AIMING
    /* if(m_oi.driveStick.getRawButton(4)){  //Y
       double heading_error = -x;
-      
-      
       if(x > 1.0){
-        steering_adjust = Kp * heading_error - min_command;
-        
-         
+        steering_adjust = Kp * heading_error - min_command; 
       }
       else if (x < 1.0){
-        steering_adjust = Kp * heading_error + min_command;
-        
-         
+        steering_adjust = Kp * heading_error + min_command; 
       }
       leftCommand += steering_adjust;
       rightCommand -= steering_adjust;
       RobotMap.dDrive.tankDrive(leftCommand*.75,rightCommand*.75);      
-
     } //END AIMING 
 
     //SEEKING SEEKING SEEKING SEEKING
     double kP2 = -0.03;
-    if(m_oi.driveStick.getRawButton(3)){
-        
+    if(m_oi.driveStick.getRawButton(3)){        
         if(v==0.0){
           //we don't see the target, seek for the target by spinning in place at a safe speed
           steering_adjust = 0.4;
-
         }
         else {
           //we do see the target, execute aiming code
-           
-           
-          double heading_error = -x;
-      
-      
+          double heading_error = -x;      
           if(x > 1.0){
-            steering_adjust = kP2 * heading_error - min_command;
-        
-         
+            steering_adjust = kP2 * heading_error - min_command;         
           }
           else if (x < -1.0){
             steering_adjust = kP2 * heading_error + min_command;
-        
-         
           }
-          
         }
         leftCommand += steering_adjust;
         rightCommand -= steering_adjust;
@@ -297,39 +265,30 @@ public class Robot extends TimedRobot {
           RobotMap.dDrive.arcadeDrive(-0.3,leftCommand*.75);
         }
         RobotMap.dDrive.tankDrive(leftCommand*.75,rightCommand*.75);  
-        
-      
     } 
     //END SEEKING
     
     double KpAim = -0.1;
     double minAimCommand = 0.05;
-
     if (m_oi.driveStick.getRawButton(5))
     {
-          
       double headingError = -x;
       double distanceError = -y;
-      double steeringAdjust = 0.0;
-      
+      double steeringAdjust = 0.0;      
       if(x > 1.0){
         steeringAdjust = KpAim * headingError - minAimCommand;
       }
       else if(x < -1.0){
-      
       steeringAdjust = KpAim*headingError+minAimCommand; 
       }
       distanceAdjust = KpDistance * distanceError;
       leftCommand += steeringAdjust + distanceAdjust;
       rightCommand -= steeringAdjust + distanceAdjust;
       //The multiplier for the speed here does NOT make the actual speed go down by that much.
-  
       RobotMap.dDrive.tankDrive((-leftCommand)*.3,(rightCommand)*.3);
     }
     */
-    
-
-
+  
     if(m_oi.driveStick.getRawButton(1)){
       RobotMap.solenoidSteve.set(DoubleSolenoid.Value.kForward);
     } 
@@ -387,12 +346,6 @@ public class Robot extends TimedRobot {
     if(m_oi.launchPad.getRawButton(9)){
       System.out.println("b5 works");
     }
-
-     
-
-
-
-
 
   }
 

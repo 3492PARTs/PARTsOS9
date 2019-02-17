@@ -69,49 +69,7 @@ public class RobotMap {
   public static SpeedControllerGroup rightMotorGroup = new SpeedControllerGroup(frontRightMotor, backRightMotor);
   public static DifferentialDrive dDrive = new DifferentialDrive(leftMotorGroup, rightMotorGroup);
 
-  //speed controllergroup
-
-  
-
-
-  
-
   public static void init(){
-   
-    //encoder
-    
-    /*frontLeftMotor  = new CANSparkMax(canID[0], MotorType.kBrushless);//check id-must set can id, change accordingly
-    backLeftMotor = new CANSparkMax(canID[1], MotorType.kBrushless);
-    frontRightMotor = new CANSparkMax(canID[2], MotorType.kBrushless);
-    backRightMotor = new CANSparkMax(canID[3], MotorType.kBrushless);
-    
 
-    frontLeftMotor.setInverted(true);
-    backLeftMotor.setInverted(true);
-
-    SpeedControllerGroup leftMotorGroup = new SpeedControllerGroup(frontLeftMotor, backLeftMotor);
-    SpeedControllerGroup rightMotorGroup = new SpeedControllerGroup(frontRightMotor, backRightMotor);
-    dDrive = new DifferentialDrive(leftMotorGroup, rightMotorGroup);
-    */
-    
-  
-
-   
   }
-
-
-
-
-  
-
-
-  // For example to map the left and right motors, you could define the
-  // following variables to use with your drivetrain subsystem.
-  // public static int leftMotor = 1;
-  // public static int rightMotor = 2;
-
-  // If you are using multiple modules, make sure to define both the port
-  // number and the module. For example you with a rangefinder:
-  // public static int rangefinderPort = 1;
-  // public static int rangefinderModule = 1;
 }

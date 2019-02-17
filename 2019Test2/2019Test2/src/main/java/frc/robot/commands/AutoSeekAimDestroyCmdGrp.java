@@ -13,10 +13,10 @@ public class AutoSeekAimDestroyCmdGrp extends CommandGroup {
   /**
    * Add your docs here.
    */
-  public AutoSeekAimDestroyCmdGrp(double seekDirection, double destroyRotations) {
+  public AutoSeekAimDestroyCmdGrp(double seekDirection, double destroyDistance) {
     addSequential(new AutoSeek(seekDirection));
     addSequential(new AutoAim());
-    addSequential(new AutoDESTROY(destroyRotations));
+    addSequential(new AutoDESTROY(destroyDistance));
     // Add Commands here:
     // e.g. addSequential(new Command1());
     // addSequential(new Command2());

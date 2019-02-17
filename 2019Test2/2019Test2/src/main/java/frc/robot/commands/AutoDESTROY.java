@@ -16,15 +16,15 @@ public class AutoDESTROY extends Command {
   private LimeLight limeLight;
   private double KpDistance;
   private Encoder encoder;
-  private double rotations;
+  private double distance;
 
 
-  public AutoDESTROY(double rotations) {
+  public AutoDESTROY(double distance) {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
     limeLight = new LimeLight(); 
     encoder = new Encoder(); 
-    this.rotations = rotations; 
+    this.distance = distance; 
 
   }
 
@@ -72,8 +72,8 @@ public class AutoDESTROY extends Command {
     RobotMap.frontRightMotor.get() == 0 && 
     RobotMap.backRightMotor.get() == 0) 
     ||
-    (encoder.getEncoderValue0() >= rotations && 
-    encoder.getEncoderValue1() >= rotations);
+    (encoder.getEncoder0Distance() >= distance && 
+    encoder.getEncoder1Distance() >= distance);
   }
 
   // Called once after isFinished returns true

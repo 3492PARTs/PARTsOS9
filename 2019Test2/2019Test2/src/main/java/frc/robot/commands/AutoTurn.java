@@ -14,11 +14,11 @@ import frc.robot.subsystems.Encoder;
 public class AutoTurn extends Command {
   private double direction;
   private Encoder encoder;
-  private double rotations;
-  public AutoTurn(double direction, double rotations) {
+  private double distance;
+  public AutoTurn(double direction, double distance) {
     this.direction = direction;
     encoder = new Encoder();
-    this.rotations = rotations;
+    this.distance = distance;
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
   }
@@ -39,7 +39,7 @@ public class AutoTurn extends Command {
   @Override
   protected boolean isFinished() {
 
-    return encoder.getEncoderValue0() >= rotations && encoder.getEncoderValue1() >= rotations;
+    return encoder.getEncoder0Distance() >= distance && encoder.getEncoder1Distance() >= distance;
   }
 
   // Called once after isFinished returns true

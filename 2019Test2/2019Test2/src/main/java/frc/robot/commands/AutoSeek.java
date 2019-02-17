@@ -32,11 +32,6 @@ public class AutoSeek extends Command {
     KpDistance = -0.1;
     double leftCommand = 0;
     double rightCommand = 0;
-    double distanceAdjust = 0;
-    double KpAim = -0.1;
-    double headingError = -limeLight.getX();
-    double distanceError = -limeLight.getY();
-    double steeringAdjust = 0.0;
     double steering_adjust = 0;
     double kP2 = -0.03;
     double min_command = -0.03;
