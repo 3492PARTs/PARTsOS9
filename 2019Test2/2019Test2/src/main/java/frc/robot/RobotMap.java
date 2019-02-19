@@ -50,8 +50,8 @@ public class RobotMap {
 
 
   //Lift motor - talon
-  public static TalonSRX liftMotor = new TalonSRX(4);
-  public static TalonSRX liftMotor2 = new TalonSRX(1);
+  public static TalonSRX liftMotor = new TalonSRX(14);
+  public static TalonSRX liftMotor2 = new TalonSRX(15);
   public static TalonSRX armMotor = new TalonSRX(0);
   public static TalonSRX intake = new TalonSRX(11);
   public static TalonSRX intake2 = new TalonSRX(5);
