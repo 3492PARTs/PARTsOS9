@@ -14,10 +14,17 @@ public class AutoCenterCmdGrp extends CommandGroup {
    * Add your docs here.
    */
   public AutoCenterCmdGrp() {
-    addSequential(new AutoSeekAimDestroy(1, 5));
-    addSequential(new AutoDriveStraight(5, 1));
-    addSequential(new AutoDeployHatch());
-    addSequential(new AutoDriveStraight(5, -1));
+    addSequential(new AutoDriveStraight(70, 0.5));
+    //addSequential(new AutoSeekAimDestroy(1, 70));
+    addSequential(new AutoDESTROY(1));
+    addParallel(new AutoAim());
+    addSequential(new AutoDriveStraight(5, 0.5));
+    addSequential(new AutoDESTROY(1));
+    //addSequential(new AutoAim());
+    //addSequential(new AutoDriveStraight(20, 0.3)); // distance, direction
+    //addSequential(new AutoDeployHatch());
+    //addSequential(new AutoDriveStraight(20, -1));
+    addSequential(new DoNothing());
 
     // Add Commands here:
     // e.g. addSequential(new Command1());

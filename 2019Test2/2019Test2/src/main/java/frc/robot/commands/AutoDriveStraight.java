@@ -36,7 +36,7 @@ public class AutoDriveStraight extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    RobotMap.dDrive.arcadeDrive(0.6 * direction, 0);
+    RobotMap.dDrive.arcadeDrive(1 * direction, 0);
     
   }
 
@@ -44,12 +44,16 @@ public class AutoDriveStraight extends Command {
   @Override
   protected boolean isFinished() {
     return (encoder.getEncoder0Distance() >= distance && encoder.getEncoder1Distance() >= distance);
+    
+
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
     RobotMap.dDrive.arcadeDrive(0,0);
+    System.out.println("finish drv frd");
+    System.out.println("Auto drv frd dist " + encoder.getEncoder0Distance());
   }
 
   // Called when another command which requires one or more of the same

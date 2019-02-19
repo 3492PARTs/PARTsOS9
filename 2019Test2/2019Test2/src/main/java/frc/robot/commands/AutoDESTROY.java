@@ -31,8 +31,7 @@ public class AutoDESTROY extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    
-    
+    encoder.resetAll();
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -61,25 +60,27 @@ public class AutoDESTROY extends Command {
     rightCommand -= steeringAdjust + distanceAdjust;
     //The multiplier for the speed here does NOT make the actual speed go down by that much.
 
-    RobotMap.dDrive.tankDrive((-leftCommand)*.3,(rightCommand)*.3);
+    RobotMap.dDrive.tankDrive((leftCommand * 0.5),(-rightCommand * 0.5));
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return (RobotMap.frontLeftMotor.get() == 0 && 
-    RobotMap.backLeftMotor.get() == 0 && 
-    RobotMap.frontRightMotor.get() == 0 && 
-    RobotMap.backRightMotor.get() == 0) 
-    ||
+    return (Math.abs(RobotMap.frontLeftMotor.get()) <= 0 && 
+    Math.abs(RobotMap.backLeftMotor.get()) <= 0 && 
+    Math.abs(RobotMap.frontRightMotor.get()) <= 0 && 
+    Math.abs(RobotMap.backRightMotor.get()) <= 0) 
+    /*||
     (encoder.getEncoder0Distance() >= distance && 
-    encoder.getEncoder1Distance() >= distance);
+    encoder.getEncoder1Distance() >= distance)*/;
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    RobotMap.dDrive.arcadeDrive(0, 0);
+    System.out.println("Destroy done");
+    System.out.println("destroy wheel speed " + RobotMap.backRightMotor.get());
+    System.out.print("destroy dist " + encoder.getEncoder0Distance());
   }
 
   // Called when another command which requires one or more of the same

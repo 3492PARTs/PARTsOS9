@@ -29,6 +29,7 @@ public class AutoSeek extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() { 
+    System.out.println("auto seek");
     KpDistance = -0.1;
     double leftCommand = 0;
     double rightCommand = 0;
@@ -86,6 +87,7 @@ public class AutoSeek extends Command {
   @Override
   protected void end() {
     RobotMap.dDrive.arcadeDrive(0, 0);
+    System.out.println("auto seek finish");
   }
 
   // Called when another command which requires one or more of the same

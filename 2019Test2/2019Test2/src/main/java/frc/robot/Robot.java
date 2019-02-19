@@ -45,16 +45,7 @@ public class Robot extends TimedRobot {
   double KpDistance = -0.1;
    
 
-  public double EstimateDistance() {
-    double distance;
-    double y = limeLight.getY();
-    SmartDashboard.putNumber("Angle of vertical offset is " , y);
-    System.out.println("Angle of vertical offset is " + y);
    
-    double rocketBallTargetHeight = 37;
-    distance = ((rocketBallTargetHeight - 9.5)/Math.abs(Math.tan(Math.toRadians(y))));
-    return distance;
-  }
   //double startPosition;
 
   /**
@@ -68,7 +59,7 @@ public class Robot extends TimedRobot {
     
     RobotMap.liftMotor2.set(ControlMode.Follower, 14);
     RobotMap.intake2.set(ControlMode.Follower, 11);
-    RobotMap.liftEncoder.setDistancePerPulse(1.3 * Math.PI);
+    //RobotMap.liftEncoder.setDistancePerPulse(1.3 * Math.PI);
     //RobotMap.armEncoder.setDistancePerPulse(100 * (35/12));
     m_oi = new OI();
     SmartDashboard.putData("Auto mode", m_chooser);
@@ -154,8 +145,10 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
     Scheduler.getInstance().run();
+
   
-    System.out.println("IM IN AUTO");
+    
+    SmartDashboard.putNumber("DriveDistanceAuto", encoder.getEncoder0Distance());
     /*if(encoderTest.currentPositionRight <= setPositionRight){
       RobotMap.dDrive.arcadeDrive(-.25, 0);
       System.out.println("IM SUPPOSED TO BE DRIVING");
@@ -205,7 +198,8 @@ public class Robot extends TimedRobot {
       armPosition = ArmPosition.home;
     }
     */
-    SmartDashboard.putNumber("ArmEncoder", RobotMap.armEncoder.getDistance());
+    SmartDashboard.putNumber("ArmEncoder", RobotMap.armEncoder.getRaw());
+    SmartDashboard.putNumber("LiftEncoder", RobotMap.liftEncoder.getDistance());
     //System.out.println("start: " + startPosition);
     Scheduler.getInstance().run();
 
@@ -223,10 +217,6 @@ public class Robot extends TimedRobot {
     System.out.println("Encoder Position: " + -RobotMap.encoder0.getPosition());
     SmartDashboard.putNumber("velocity", RobotMap.encoder0.getVelocity());*/
     //send info to the console as to whether the compressor thinks it is on or off
-    System.out.println("The compressor thinks it's on:  " + RobotMap.c.enabled()); 
-    System.out.println("The pressure switch value is: " + RobotMap.c.getPressureSwitchValue());
-    System.out.println("The compressor current is: " + RobotMap.c.getCompressorCurrent());
-
     RobotMap.dDrive.arcadeDrive(-m_oi.driveStick.getRawAxis(1)*.8,m_oi.driveStick.getRawAxis(4)*.5);
     
 
@@ -241,7 +231,7 @@ public class Robot extends TimedRobot {
     
 
     //AIMING AIMING AIMING AIMING
-   /* if(m_oi.driveStick.getRawButton(4)){  //Y
+   if(m_oi.driveStick.getRawButton(4)){  //Y
       double heading_error = -x;
       if(x > 1.0){
         steering_adjust = Kp * heading_error - min_command; 
@@ -278,7 +268,7 @@ public class Robot extends TimedRobot {
         }
         if (m_oi.driveStick.getRawAxis(4) > 0){
           RobotMap.dDrive.arcadeDrive(-0.3,leftCommand*.75);
-        }
+        }*/
         RobotMap.dDrive.tankDrive(leftCommand*.75,rightCommand*.75);  
     } 
     //END SEEKING
@@ -300,9 +290,8 @@ public class Robot extends TimedRobot {
       leftCommand += steeringAdjust + distanceAdjust;
       rightCommand -= steeringAdjust + distanceAdjust;
       //The multiplier for the speed here does NOT make the actual speed go down by that much.
-      RobotMap.dDrive.tankDrive((-leftCommand)*.3,(rightCommand)*.3);
+      RobotMap.dDrive.tankDrive((leftCommand)*.3,(-rightCommand)*.3);
     }
-    */
   
     if(m_oi.driveStick.getRawButton(1)){
       RobotMap.solenoidSteve.set(DoubleSolenoid.Value.kForward);
@@ -311,7 +300,7 @@ public class Robot extends TimedRobot {
     if(m_oi.driveStick.getRawButton(2)){
       RobotMap.solenoidSteve.set(DoubleSolenoid.Value.kReverse);
     }  
-
+    /*
     if(m_oi.driveStick.getRawButton(3)){
       RobotMap.armMotor.set(ControlMode.PercentOutput, 1);
     }
@@ -330,7 +319,7 @@ public class Robot extends TimedRobot {
     }
     else{
       RobotMap.intake.set(ControlMode.PercentOutput, 0);
-    }
+    }*/
 
     if(m_oi.launchPad.getRawButton(1)){
       RobotMap.liftMotor.set(ControlMode.PercentOutput, 1);

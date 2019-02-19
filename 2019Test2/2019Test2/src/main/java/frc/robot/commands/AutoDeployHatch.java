@@ -40,7 +40,8 @@ private long exeTime;
 
   // Called once after isFinished returns true
   @Override
-  protected void end() {
+  protected void end() {    
+    System.out.println("hatch deployed");
     RobotMap.solenoidSteve.set(DoubleSolenoid.Value.kReverse);
   }
 
