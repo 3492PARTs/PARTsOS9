@@ -48,7 +48,7 @@ public class AutoAim extends Command {
       
        
     }
-    else if (x < 1.0){
+    else if (x < -1.0){
       steering_adjust = Kp * heading_error + min_command;
       
        
@@ -63,7 +63,7 @@ public class AutoAim extends Command {
   @Override
   protected boolean isFinished() {
 
-    return x > -1 && x < 1;
+    return (Math.abs(limeLight.getX()) < 3);
   }
 
   // Called once after isFinished returns true

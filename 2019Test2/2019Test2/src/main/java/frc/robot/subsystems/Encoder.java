@@ -19,6 +19,11 @@ public class Encoder extends Subsystem {
   // here. Call these from Commands.
     private static double startingPosition0 = 0;
     private static double startingPosition1 = 0;
+    private static double startingPositionLift = 0;
+
+public Encoder(){
+
+}
 
 
   @Override
@@ -66,6 +71,11 @@ public class Encoder extends Subsystem {
 
   public void reset0(){
     startingPosition0 = RobotMap.encoder0.getPosition();
+  }
+
+  public double resetLift(){
+    startingPositionLift = RobotMap.liftMotor.getSelectedSensorPosition();
+    return startingPositionLift;
   }
 
   public void resetAll(){

@@ -10,6 +10,9 @@ package frc.robot.commands;
 import frc.robot.*;
 import frc.robot.subsystems.Encoder;
 import frc.robot.subsystems.LimeLight;
+
+
+
 import edu.wpi.first.wpilibj.command.Command;
 
 public class AutoDESTROY extends Command {
@@ -47,6 +50,9 @@ public class AutoDESTROY extends Command {
     double headingError = -limeLight.getX();
     double distanceError = -limeLight.getY();
     double steeringAdjust = 0.0;
+    double scaleFactor= 0.0;
+
+    System.out.println("I'm in DESTROY!");
     
     if(limeLight.getX() > 1.0){
       steeringAdjust = KpAim * headingError - minAimCommand;
@@ -59,20 +65,31 @@ public class AutoDESTROY extends Command {
     leftCommand += steeringAdjust + distanceAdjust;
     rightCommand -= steeringAdjust + distanceAdjust;
     //The multiplier for the speed here does NOT make the actual speed go down by that much.
-
-    RobotMap.dDrive.tankDrive((leftCommand * 0.5),(-rightCommand * 0.5));
+    if(Math.abs(leftCommand) < 0.2) 
+    {
+      
+      scaleFactor = 2;
+    }
+    else if(Math.abs(leftCommand) > 0.6)
+    {
+      scaleFactor = 0.5;
+    }
+    else {
+      scaleFactor = 1;
+    } 
+    RobotMap.dDrive.tankDrive((leftCommand * scaleFactor),(-rightCommand * scaleFactor));
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return (Math.abs(RobotMap.frontLeftMotor.get()) <= 0 && 
-    Math.abs(RobotMap.backLeftMotor.get()) <= 0 && 
-    Math.abs(RobotMap.frontRightMotor.get()) <= 0 && 
-    Math.abs(RobotMap.backRightMotor.get()) <= 0) 
+    return (Math.abs(RobotMap.frontLeftMotor.get()) <= .005 && 
+    Math.abs(RobotMap.backLeftMotor.get()) <= .005 && 
+    Math.abs(RobotMap.frontRightMotor.get()) <= .005 && 
+    Math.abs(RobotMap.backRightMotor.get()) <= .005);
     /*||
     (encoder.getEncoder0Distance() >= distance && 
-    encoder.getEncoder1Distance() >= distance)*/;
+    encoder.getEncoder1Distance() >= distance);*/
   }
 
   // Called once after isFinished returns true

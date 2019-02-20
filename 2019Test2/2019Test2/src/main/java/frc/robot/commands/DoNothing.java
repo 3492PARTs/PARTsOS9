@@ -20,7 +20,7 @@ public class DoNothing extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    time = System.currentTimeMillis() + 15000;
+    time = System.currentTimeMillis() + 5000;
   }
 
   // Called repeatedly when this Command is scheduled to run

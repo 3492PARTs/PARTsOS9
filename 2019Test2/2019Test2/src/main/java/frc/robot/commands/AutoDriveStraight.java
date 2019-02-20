@@ -36,7 +36,8 @@ public class AutoDriveStraight extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    RobotMap.dDrive.arcadeDrive(1 * direction, 0);
+    System.out.println("I'm on the last forward stretch!");
+    RobotMap.dDrive.tankDrive(1 * direction, 1 * direction);
     
   }
 

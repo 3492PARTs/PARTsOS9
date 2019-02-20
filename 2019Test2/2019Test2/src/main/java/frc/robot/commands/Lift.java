@@ -65,7 +65,8 @@ public class Lift extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return RobotMap.liftEncoder.getDistance() < (distance + 0.5) || RobotMap.liftEncoder.getDistance() > (distance - 0.5);
+    return RobotMap.liftMotor.getSelectedSensorPosition() < (distance + 0.5) || RobotMap.liftMotor.getSelectedSensorPosition() > (distance - 0.5);
+  //change the 0.5
   }
 
   // Called once after isFinished returns true
