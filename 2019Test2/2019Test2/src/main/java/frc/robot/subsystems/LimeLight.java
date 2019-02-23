@@ -13,9 +13,6 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
 
-/**
- * Add your docs here.
- */
 public class LimeLight extends Subsystem {
   NetworkTableEntry tx;
   NetworkTableEntry ty;
@@ -31,14 +28,8 @@ public class LimeLight extends Subsystem {
     tv = table.getEntry("tv");
   }
 
-  
-  // Put methods for controlling this subsystem
-  // here. Call these from Commands.
-
   @Override
   public void initDefaultCommand() {
-    // Set the default command for a subsystem here.
-    // setDefaultCommand(new MySpecialCommand());
   }
 
   public double getX(){

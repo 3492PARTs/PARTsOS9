@@ -19,28 +19,22 @@ public class AutoSeekAimDestroy extends Command {
   private AutoSeekAimDestroyCmdGrp autoSeekAimDestroyCmdGrp;
   private Encoder encoder = new Encoder();
   public AutoSeekAimDestroy(double seekDirection, double destroyDistance) {
-    // Use requires() here to declare subsystem dependencies
-    // eg. requires(chassis);
-    limeLight = new LimeLight();
-    
+    limeLight = new LimeLight();  
     this.seekDirection = seekDirection;
     this.destroyDistance = destroyDistance;
   }
 
-  // Called just before this Command runs the first time
   @Override
   protected void initialize() {
     encoder.resetAll();
   }
 
-  // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
     autoSeekAimDestroyCmdGrp = new AutoSeekAimDestroyCmdGrp(seekDirection, destroyDistance);
     autoSeekAimDestroyCmdGrp.start();
   }
 
-  // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
     return (Math.abs(RobotMap.frontLeftMotor.get()) <= .01 && 
@@ -49,7 +43,6 @@ public class AutoSeekAimDestroy extends Command {
     Math.abs(RobotMap.backRightMotor.get()) <= .01);
   }
 
-  // Called once after isFinished returns true
   @Override
   protected void end() {
     RobotMap.dDrive.arcadeDrive(0, 0);
@@ -57,8 +50,6 @@ public class AutoSeekAimDestroy extends Command {
     System.out.println("seek aim destrou grp dist: " + encoder.getEncoder0Distance());
   }
 
-  // Called when another command which requires one or more of the same
-  // subsystems is scheduled to run
   @Override
   protected void interrupted() {
   }

@@ -51,27 +51,21 @@ public class AutoDESTROY extends Command {
     double distanceError = -limeLight.getY();
     double steeringAdjust = 0.0;
     double scaleFactor= 0.0;
-
     System.out.println("I'm in DESTROY!");
     
     if(limeLight.getX() > 1.0){
       steeringAdjust = KpAim * headingError - minAimCommand;
     }
     else if(limeLight.getX() < -1.0){
-    
-    steeringAdjust = KpAim * headingError + minAimCommand; 
+      steeringAdjust = KpAim * headingError + minAimCommand; 
     }
     distanceAdjust = KpDistance * distanceError;
     leftCommand += steeringAdjust + distanceAdjust;
     rightCommand -= steeringAdjust + distanceAdjust;
-    //The multiplier for the speed here does NOT make the actual speed go down by that much.
-    if(Math.abs(leftCommand) < 0.2) 
-    {
-      
+    if(Math.abs(leftCommand) < 0.2) { 
       scaleFactor = 2;
     }
-    else if(Math.abs(leftCommand) > 0.6)
-    {
+    else if(Math.abs(leftCommand) > 0.6){
       scaleFactor = 0.5;
     }
     else {
@@ -80,7 +74,6 @@ public class AutoDESTROY extends Command {
     RobotMap.dDrive.tankDrive((leftCommand * scaleFactor),(-rightCommand * scaleFactor));
   }
 
-  // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
     return (Math.abs(RobotMap.frontLeftMotor.get()) <= .005 && 
@@ -92,7 +85,6 @@ public class AutoDESTROY extends Command {
     encoder.getEncoder1Distance() >= distance);*/
   }
 
-  // Called once after isFinished returns true
   @Override
   protected void end() {
     System.out.println("Destroy done");
@@ -100,8 +92,6 @@ public class AutoDESTROY extends Command {
     System.out.print("destroy dist " + encoder.getEncoder0Distance());
   }
 
-  // Called when another command which requires one or more of the same
-  // subsystems is scheduled to run
   @Override
   protected void interrupted() {
   }

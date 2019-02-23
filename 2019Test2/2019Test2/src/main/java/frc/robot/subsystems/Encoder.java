@@ -11,26 +11,16 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.*;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 
-/**
- * An example subsystem.  You can replace me with your own Subsystem.
- */
 public class Encoder extends Subsystem {
-  // Put methods for controlling this subsystem
-  // here. Call these from Commands.
     private static double startingPosition0 = 0;
     private static double startingPosition1 = 0;
     private static double startingPositionLift = 0;
 
 public Encoder(){
-
 }
-
 
   @Override
   public void initDefaultCommand() {
-
-    // Set the default command for a subsystem here.
-    // setDefaultCommand(new MySpecialCommand());
   }
 
   public double getEncoderValue0(){

@@ -19,36 +19,27 @@ public class AutoTurn extends Command {
     this.direction = direction;
     encoder = new Encoder();
     this.distance = distance;
-    // Use requires() here to declare subsystem dependencies
-    // eg. requires(chassis);
   }
 
-  // Called just before this Command runs the first time
   @Override
   protected void initialize() {
     encoder.resetAll();
   }
 
-  // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
     RobotMap.dDrive.arcadeDrive(0, .3*direction);
   }
 
-  // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-
-    return encoder.getEncoder0Distance() >= distance && encoder.getEncoder1Distance() >= distance;
+    return Math.abs(encoder.getEncoder0Distance()) >= distance && Math.abs(encoder.getEncoder1Distance()) >= distance;
   }
 
-  // Called once after isFinished returns true
   @Override
   protected void end() {
   }
 
-  // Called when another command which requires one or more of the same
-  // subsystems is scheduled to run
   @Override
   protected void interrupted() {
   }

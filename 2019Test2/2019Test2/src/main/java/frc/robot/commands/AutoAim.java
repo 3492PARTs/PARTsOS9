@@ -16,25 +16,17 @@ public class AutoAim extends Command {
   double KpDistance;
 
   public AutoAim() {
-    // Use requires() here to declare subsystem dependencies
-    // eg. requires(chassis);
   }
-
-  // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    
-    
   }
 
-  // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() { 
     x = limeLight.getX();
     y = limeLight.getY();
     area = limeLight.getArea();
     v = limeLight.getV();
-
     KpDistance = -0.1;
     double leftCommand = 0;
     double rightCommand = 0;
@@ -45,35 +37,25 @@ public class AutoAim extends Command {
 
     if(x > 1.0){
       steering_adjust = Kp * heading_error - min_command;
-      
-       
     }
     else if (x < -1.0){
       steering_adjust = Kp * heading_error + min_command;
-      
-       
     }
     leftCommand += steering_adjust;
     rightCommand -= steering_adjust;
     RobotMap.dDrive.tankDrive(leftCommand*.75,rightCommand*.75);     
-    
   }
 
-  // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-
     return (Math.abs(limeLight.getX()) < 3);
   }
 
-  // Called once after isFinished returns true
   @Override
   protected void end() {
     System.out.println("Aim done");
   }
 
-  // Called when another command which requires one or more of the same
-  // subsystems is scheduled to run
   @Override
   protected void interrupted() {
   }

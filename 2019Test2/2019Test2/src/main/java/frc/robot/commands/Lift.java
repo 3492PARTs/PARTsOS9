@@ -33,15 +33,15 @@ public class Lift extends Command {
   protected void initialize() {
     switch(liftLevel){
       case Low: 
-        distance = 0;
+        distance = 0;//startPosition- need to make command for it
       break;
 
       case Middle:
-        distance = 1; //TODO: change values
+        distance = -34206; //TODO: change values
       break;
 
       case High:
-        distance = 2;
+        distance = -70270;
       break;
 
       default:
