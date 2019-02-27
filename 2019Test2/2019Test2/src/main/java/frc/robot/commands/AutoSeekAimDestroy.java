@@ -9,7 +9,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.RobotMap;
-import frc.robot.subsystems.Encoder;
+import frc.robot.subsystems.Encoders;
 import frc.robot.subsystems.LimeLight;
 
 public class AutoSeekAimDestroy extends Command {
@@ -17,7 +17,7 @@ public class AutoSeekAimDestroy extends Command {
   private double seekDirection; 
   private double destroyDistance;
   private AutoSeekAimDestroyCmdGrp autoSeekAimDestroyCmdGrp;
-  private Encoder encoder = new Encoder();
+  private Encoders encoder = new Encoders();
   public AutoSeekAimDestroy(double seekDirection, double destroyDistance) {
     limeLight = new LimeLight();  
     this.seekDirection = seekDirection;

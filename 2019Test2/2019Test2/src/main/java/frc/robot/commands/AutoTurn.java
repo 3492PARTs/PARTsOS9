@@ -9,15 +9,15 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.RobotMap;
-import frc.robot.subsystems.Encoder;
+import frc.robot.subsystems.Encoders;
 
 public class AutoTurn extends Command {
   private double direction;
-  private Encoder encoder;
+  private Encoders encoder;
   private double distance;
   public AutoTurn(double direction, double distance) {
     this.direction = direction;
-    encoder = new Encoder();
+    encoder = new Encoders();
     this.distance = distance;
   }
 

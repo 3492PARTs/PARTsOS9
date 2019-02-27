@@ -8,7 +8,7 @@
 package frc.robot.commands;
 
 import frc.robot.*;
-import frc.robot.subsystems.Encoder;
+import frc.robot.subsystems.Encoders;
 import frc.robot.subsystems.LimeLight;
 
 
@@ -18,7 +18,7 @@ import edu.wpi.first.wpilibj.command.Command;
 public class AutoDESTROY extends Command {
   private LimeLight limeLight;
   private double KpDistance;
-  private Encoder encoder;
+  private Encoders encoders;
   private double distance;
 
 
@@ -26,7 +26,7 @@ public class AutoDESTROY extends Command {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
     limeLight = new LimeLight(); 
-    encoder = new Encoder(); 
+    encoders = new Encoders(); 
     this.distance = distance; 
 
   }
@@ -34,7 +34,7 @@ public class AutoDESTROY extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    encoder.resetAll();
+    encoders.resetAll();
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -89,7 +89,7 @@ public class AutoDESTROY extends Command {
   protected void end() {
     System.out.println("Destroy done");
     System.out.println("destroy wheel speed " + RobotMap.backRightMotor.get());
-    System.out.print("destroy dist " + encoder.getEncoder0Distance());
+    System.out.print("destroy dist " + encoders.getEncoder0Distance());
   }
 
   @Override

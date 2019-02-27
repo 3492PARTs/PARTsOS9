@@ -8,31 +8,85 @@
 
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import edu.wpi.first.wpilibj.AnalogGyro;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.commands.ArmPosition;
+import frc.robot.commands.AutoCenterCmdGrp;
+import frc.robot.commands.AutoDoNothingCmdGrp;
+import frc.robot.commands.AutoDriveFwdCmdGrp;
+import frc.robot.commands.AutoLeftLV2CmdGrp;
+import frc.robot.commands.AutoRightLV2CmdGrp;
+import frc.robot.subsystems.Encoders;
 import frc.robot.subsystems.ExampleSubsystem;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
-import frc.robot.commands.*;
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import frc.robot.subsystems.*;
+import frc.robot.subsystems.LimeLight;
+import jaci.pathfinder.Pathfinder;
+import jaci.pathfinder.PathfinderFRC;
+import jaci.pathfinder.Trajectory;
+import jaci.pathfinder.Trajectory.Config;
+import jaci.pathfinder.followers.EncoderFollower;
+
+
+
+
+
 
 public class Robot extends TimedRobot {
+
+  private static final int kTicksPerRev = 750;
+  private static final double kWheelDiameter = 6.25;
+  private static final double kMaxVelocity = 18 * 12;
+
+  private static final int kLeftChannel = 0;
+  private static final int kRightChannel = 1;
+
+  private static final int kGyroPort = 0;
+
+  private static final String kPath = "RightRocket";
+
+  private AnalogGyro gyro;
+
+  private EncoderFollower leftFollower;
+  private EncoderFollower rightFollower;
+
+  private Notifier followerNotifier;
+
   public static ExampleSubsystem m_subsystem = new ExampleSubsystem();
   public static OI m_oi;
   Command m_autonomousCommand;
   SendableChooser<Command> m_chooser = new SendableChooser<>();
   double setPositionRight;
   LimeLight limeLight = new LimeLight();
-  Encoder encoder = new Encoder();
+  Encoders encoder = new Encoders();
   double KpDistance = -0.1;
   boolean firstPress8 = true;
   double startPosition;
 
+ private void followPath(){
+    if (leftFollower.isFinished() ||rightFollower.isFinished()){
+      followerNotifier.stop();
+    }
+    else{
+      double leftSpeed = leftFollower.calculate((int)RobotMap.encoder1.getPosition());
+      double rightSpeed = leftFollower.calculate((int)RobotMap.encoder0.getPosition());
+      double heading = gyro.getAngle();
+      double desiredHeading = Pathfinder.r2d(leftFollower.getHeading());
+      double headingDifference = Pathfinder.boundHalfDegrees(desiredHeading - heading);
+      double turn = 0.8 * (-1.0/80.0) * headingDifference;
+      RobotMap.dDrive.tankDrive((leftSpeed + turn), (rightSpeed - turn));
+    }
+  } 
+
   @Override
   public void robotInit() {
+    gyro = new AnalogGyro(kGyroPort);
+    
     RobotMap.liftMotor2.set(ControlMode.Follower, 14);
     RobotMap.intake2.set(ControlMode.Follower, 11);
     m_oi = new OI();
@@ -57,15 +111,42 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledPeriodic() {
     Scheduler.getInstance().run();
+    
   }
 
   @Override
   public void autonomousInit() {
     m_autonomousCommand = m_chooser.getSelected();
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.start();
-    }
+    /*
+     * if (m_autonomousCommand != null) { m_autonomousCommand.start(); }
+     */
+  
+    Trajectory rightTrajectory = PathfinderFRC.getTrajectory(kPath + ".left");
+    
+  
+
+    Trajectory leftTrajectory = PathfinderFRC.getTrajectory(kPath + ".right");
+    
+  
+    
+    leftFollower = new EncoderFollower(leftTrajectory);
+    rightFollower = new EncoderFollower(rightTrajectory);
+    //double position = Math.round(RobotMap.encoder0.getPosition());
+
+    leftFollower.configureEncoder((int) RobotMap.encoder1.getPosition(), kTicksPerRev, kWheelDiameter / 254);
+    leftFollower.configurePIDVA(1.0, 0.0, 0.0, 1 / kMaxVelocity, 0);
+
+    rightFollower.configureEncoder((int) RobotMap.encoder0.getPosition(), kTicksPerRev, kWheelDiameter / 254);
+    rightFollower.configurePIDVA(1.0, 0.0, 0.0, 1 / kMaxVelocity, 0);
+
+    followerNotifier = new Notifier(this::followPath);
+    followerNotifier.startPeriodic(leftTrajectory.get(0).dt);
+
+    
+
   }
+
+
 
   @Override
   public void autonomousPeriodic() {
@@ -78,12 +159,17 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
-   
+    
+    followerNotifier.stop();
+    RobotMap.dDrive.tankDrive(0,0);
+
     startPosition = RobotMap.liftMotor.getSelectedSensorPosition();
   }
   ArmPosition armPosition = ArmPosition.home;
   @Override
   public void teleopPeriodic() {
+
+    
     /*
     if (RobotMap.liftEncoder.getDistance() >= 1 && RobotMap.liftEncoder.getDistance() <= 1 && armPosition == ArmPosition.home){
       new ArmPivot(ArmPosition.miss).start();

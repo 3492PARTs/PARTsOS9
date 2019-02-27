@@ -11,12 +11,12 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.*;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 
-public class Encoder extends Subsystem {
+public class Encoders extends Subsystem {
     private static double startingPosition0 = 0;
     private static double startingPosition1 = 0;
     private static double startingPositionLift = 0;
 
-public Encoder(){
+public Encoders(){
 }
 
   @Override

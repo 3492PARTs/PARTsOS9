@@ -9,17 +9,17 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.*;
-import frc.robot.subsystems.Encoder;
+import frc.robot.subsystems.Encoders;
 
 public class AutoDriveStraight extends Command {
-  private Encoder encoder;
+  private Encoders encoder;
   private double distance;
   private double direction;
   public AutoDriveStraight(double distance, double direction) {
     requires(Robot.m_subsystem);
     this.distance = distance;
     this.direction = direction;
-    encoder = new Encoder(); 
+    encoder = new Encoders(); 
   }
 
   @Override
