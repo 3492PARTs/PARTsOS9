@@ -76,9 +76,7 @@ public class AutoDESTROY extends Command {
 
   @Override
   protected boolean isFinished() {
-    return (Math.abs(RobotMap.frontLeftMotor.get()) <= .005 && 
-    Math.abs(RobotMap.backLeftMotor.get()) <= .005 && 
-    Math.abs(RobotMap.frontRightMotor.get()) <= .005 && 
+    return (Math.abs(RobotMap.backLeftMotor.get()) <= .005 &&  
     Math.abs(RobotMap.backRightMotor.get()) <= .005);
     /*||
     (encoder.getEncoder0Distance() >= distance && 

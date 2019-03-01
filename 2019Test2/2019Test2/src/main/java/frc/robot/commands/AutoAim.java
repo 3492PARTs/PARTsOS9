@@ -44,11 +44,12 @@ public class AutoAim extends Command {
     leftCommand += steering_adjust;
     rightCommand -= steering_adjust;
     RobotMap.dDrive.tankDrive(leftCommand*.75,rightCommand*.75);     
+    System.out.println("I'm aiming");
   }
 
   @Override
   protected boolean isFinished() {
-    return (Math.abs(limeLight.getX()) < 3);
+    return (Math.abs(limeLight.getX()) < 2);
   }
 
   @Override

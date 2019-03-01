@@ -103,7 +103,7 @@ public class Robot extends TimedRobot {
     m_chooser.addOption("CenterCargoAuto", new AutoCenterCmdGrp());
     m_chooser.addOption("DoNothingAuto", new AutoDoNothingCmdGrp());    
     RobotMap.c.setClosedLoopControl(true);
-    RobotMap.solenoidStan.set(DoubleSolenoid.Value.kForward); //TODO: check if forward is low gear
+    RobotMap.solenoidStan.set(DoubleSolenoid.Value.kReverse); //TODO: check if forward is low gear
   }
     
   @Override
@@ -211,7 +211,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("LimelightY", y);
     SmartDashboard.putNumber("LimelightArea", area);
     SmartDashboard.putNumber("Target Valid", v);
-    SmartDashboard.putNumber("Drive Distance", encoder.getEncoder0Distance());
+    SmartDashboard.putNumber("Drive Distance Teleop", encoder.getEncoder0Distance());
     SmartDashboard.putNumber("Lift Encoder Distance", RobotMap.liftMotor.getSelectedSensorPosition());
     SmartDashboard.putNumber("RPMs ", RobotMap.encoder0.getVelocity());
     
@@ -225,7 +225,7 @@ public class Robot extends TimedRobot {
     double rightCommand = 0;
     double steering_adjust = 0;double startPos;
     double distanceAdjust = 0;
-   /* 
+    
     //AIMING AIMING AIMING AIMING
    if(m_oi.driveStick.getRawButton(4)){  //Y
       double heading_error = -x;
@@ -287,7 +287,7 @@ public class Robot extends TimedRobot {
       rightCommand -= steeringAdjust + distanceAdjust;
       //The multiplier for the speed here does NOT make the actual speed go down by that much.
       RobotMap.dDrive.tankDrive((leftCommand)*.3,(-rightCommand)*.3);
-    } */
+    } 
   // end aim, seek, destroy
     if(m_oi.driveStick.getRawButton(1)){
       RobotMap.solenoidSteve.set(DoubleSolenoid.Value.kForward);
@@ -297,19 +297,19 @@ public class Robot extends TimedRobot {
       RobotMap.solenoidSteve.set(DoubleSolenoid.Value.kReverse);
     }  
     
-    if(m_oi.driveStick.getRawButton(3)){
-      RobotMap.armMotor.set(ControlMode.PercentOutput, 1);
-    }
-    else if(m_oi.driveStick.getRawButton(4)){
-      RobotMap.armMotor.set(ControlMode.PercentOutput, -1);
-    }
-    else{
-      RobotMap.armMotor.set(ControlMode.PercentOutput, 0);
-    }
+    //if(m_oi.driveStick.getRawButton(3)){
+    //   RobotMap.armMotor.set(ControlMode.PercentOutput, 1);
+    // }
+    // else if(m_oi.driveStick.getRawButton(4)){
+    //   RobotMap.armMotor.set(ControlMode.PercentOutput, -1);
+    // }
+    // else{
+    //   RobotMap.armMotor.set(ControlMode.PercentOutput, 0);
+    // }
 
-    if(m_oi.driveStick.getRawButton(5)){
-      RobotMap.intake.set(ControlMode.PercentOutput, 1);
-    }
+    // if(m_oi.driveStick.getRawButton(5)){
+    //   RobotMap.intake.set(ControlMode.PercentOutput, 1);
+    // }
     else if(m_oi.driveStick.getRawButton(6)){
       RobotMap.intake.set(ControlMode.PercentOutput, -.775);
     }
@@ -328,19 +328,19 @@ public class Robot extends TimedRobot {
     
     if (m_oi.launchPad.getRawButton(8)){
       if((RobotMap.liftMotor.getSelectedSensorPosition() - startPosition) < -34206){
-        RobotMap.liftMotor.set(ControlMode.PercentOutput, 1);
+        RobotMap.liftMotor.set(ControlMode.PercentOutput, 1); //down
       } else if(RobotMap.liftMotor.getSelectedSensorPosition() - startPosition > -34206){
-        RobotMap.liftMotor.set(ControlMode.PercentOutput, -1);
+        RobotMap.liftMotor.set(ControlMode.PercentOutput, -1); //up
       }
       else RobotMap.liftMotor.set(ControlMode.PercentOutput, 0);
     }
     
     if (m_oi.launchPad.getRawButton(9)){
       if((RobotMap.liftMotor.getSelectedSensorPosition() - startPosition) < -70270){
-        RobotMap.liftMotor.set(ControlMode.PercentOutput, 1);
+        RobotMap.liftMotor.set(ControlMode.PercentOutput, 1); //down
       }
       else if((RobotMap.liftMotor.getSelectedSensorPosition() - startPosition) > -70270){
-        RobotMap.liftMotor.set(ControlMode.PercentOutput, -1);
+        RobotMap.liftMotor.set(ControlMode.PercentOutput, -1); //up
       }
       else{
         RobotMap.liftMotor.set(ControlMode.PercentOutput, 0);
@@ -348,11 +348,11 @@ public class Robot extends TimedRobot {
     }
 
     if(m_oi.launchPad.getRawButton(5)){
-      if(RobotMap.liftMotor.getSelectedSensorPosition() > startPosition){
-        RobotMap.liftMotor.set(ControlMode.PercentOutput, 0);
+      if(RobotMap.liftMotor.getSelectedSensorPosition() > (startPosition - 360)){
+        RobotMap.liftMotor.set(ControlMode.PercentOutput, 0); //stop
       }
-      else if (RobotMap.liftMotor.getSelectedSensorPosition() < startPosition){
-        RobotMap.liftMotor.set(ControlMode.PercentOutput, 1);
+      else if (RobotMap.liftMotor.getSelectedSensorPosition() < (startPosition - 360)){
+        RobotMap.liftMotor.set(ControlMode.PercentOutput, 1); //down
       }
     }
   }

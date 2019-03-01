@@ -8,40 +8,41 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
-import frc.robot.*;
-import frc.robot.subsystems.Encoders;
 
-public class AutoDriveStraight extends Command {
-  private Encoders encoder;
-  private double distance;
-  private double direction;
-  public AutoDriveStraight(double distance, double direction) {
-    requires(Robot.m_subsystem);
-    this.distance = distance;
-    this.direction = direction;
-    encoder = new Encoders(); 
+public class TwoSecTimer extends Command {
+  private long currentTime;
+  private long startTime;
+  public TwoSecTimer() {
+    // Use requires() here to declare subsystem dependencies
+    // eg. requires(chassis);
+    
   }
 
+  // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    encoder.resetAll();
+    startTime = System.currentTimeMillis();
   }
 
+  // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    RobotMap.dDrive.tankDrive(1 * direction, 1 * direction);
+    currentTime = System.currentTimeMillis();
   }
 
+  // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return (Math.abs(encoder.getEncoder0Distance()) >= distance && Math.abs(encoder.getEncoder1Distance())>= distance);
+    return (currentTime - startTime) >= 2000; 
   }
 
+  // Called once after isFinished returns true
   @Override
   protected void end() {
-    RobotMap.dDrive.arcadeDrive(0,0);
   }
 
+  // Called when another command which requires one or more of the same
+  // subsystems is scheduled to run
   @Override
   protected void interrupted() {
   }

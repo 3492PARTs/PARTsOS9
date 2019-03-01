@@ -12,14 +12,14 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 public class AutoCenterCmdGrp extends CommandGroup {
   
   public AutoCenterCmdGrp() {
-    addSequential(new AutoDriveStraight(70, 0.5));
+    addSequential(new AutoDriveStraight(70, 0.6));
     addSequential(new AutoAim());
     addSequential(new AutoDriveStraight(5, 0.5));
     addSequential(new AutoDESTROY(1));
-    addSequential(new AutoAim());
-    addSequential(new AutoDriveStraight(15, 0.4)); // distance, direction
+    //addSequential(new AutoAim());
+    //addSequential(new AutoDriveStraight(15, 0.4)); // distance, direction
     //addSequential(new AutoDeployHatch());
-    addSequential(new AutoDriveStraight(20, -.5));
+    //addSequential(new AutoDriveStraight(15, -.5));
     addSequential(new DoNothing());
     addSequential(new DoNothing());
   }

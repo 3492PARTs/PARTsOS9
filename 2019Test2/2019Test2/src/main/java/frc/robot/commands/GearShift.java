@@ -17,6 +17,7 @@ public class GearShift extends Command {
     private Boolean highGear = false;
     private Boolean TimesUp = false;
     long startTime;
+    TwoSecTimer twoSecTimer = new TwoSecTimer();
   public GearShift() {
       m_oi = new OI();
     requires(Robot.m_subsystem);
@@ -30,9 +31,12 @@ public class GearShift extends Command {
   @Override
   protected void execute() {
       if (Math.abs(RobotMap.encoder0.getVelocity()) >= 1500){
+            twoSecTimer.start();
+          if(twoSecTimer.isFinished()){
             RobotMap.solenoidStan.set(DoubleSolenoid.Value.kForward);
             highGear = true;
             SmartDashboard.putBoolean("Gear shifted to high ", highGear);
+            }
         
       }
       else if (Math.abs(m_oi.driveStick.getRawAxis(1)) < 0.01){
