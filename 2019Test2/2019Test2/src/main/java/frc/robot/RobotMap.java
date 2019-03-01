@@ -32,8 +32,8 @@ public class RobotMap {
   public static CANSparkMax backLeftMotor = new CANSparkMax(canID[0], MotorType.kBrushless);
   public static CANSparkMax frontRightMotor = new CANSparkMax(canID[2], MotorType.kBrushless);
   public static CANSparkMax backRightMotor = new CANSparkMax(canID[3], MotorType.kBrushless);
-  public static CANEncoder encoder0 = frontRightMotor.getEncoder();
-  public static CANEncoder encoder1 = frontLeftMotor.getEncoder();
+  public static CANEncoder encoder0 = backRightMotor.getEncoder();
+  public static CANEncoder encoder1 = backLeftMotor.getEncoder();
   public static SpeedControllerGroup leftMotorGroup = new SpeedControllerGroup(frontLeftMotor, backLeftMotor);
   public static SpeedControllerGroup rightMotorGroup = new SpeedControllerGroup(frontRightMotor, backRightMotor);
   public static DifferentialDrive dDrive = new DifferentialDrive(leftMotorGroup, rightMotorGroup);

@@ -29,13 +29,12 @@ public class AutoDriveStraight extends Command {
 
   @Override
   protected void execute() {
-    System.out.println("I'm on the last forward stretch!");
     RobotMap.dDrive.tankDrive(1 * direction, 1 * direction);
   }
 
   @Override
   protected boolean isFinished() {
-    return (encoder.getEncoder0Distance() >= distance && encoder.getEncoder1Distance() >= distance);
+    return (Math.abs(encoder.getEncoder0Distance()) >= distance && Math.abs(encoder.getEncoder1Distance())>= distance);
   }
 
   @Override

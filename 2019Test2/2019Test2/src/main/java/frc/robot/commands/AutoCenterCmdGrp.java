@@ -18,7 +18,7 @@ public class AutoCenterCmdGrp extends CommandGroup {
     addSequential(new AutoDESTROY(1));
     addSequential(new AutoAim());
     addSequential(new AutoDriveStraight(15, 0.4)); // distance, direction
-    addSequential(new AutoDeployHatch());
+    //addSequential(new AutoDeployHatch());
     addSequential(new AutoDriveStraight(20, -.5));
     addSequential(new DoNothing());
     addSequential(new DoNothing());

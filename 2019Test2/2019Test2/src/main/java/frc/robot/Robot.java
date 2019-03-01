@@ -9,6 +9,10 @@
 package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+
+import java.io.File;
+import java.io.IOException;
+
 import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Notifier;
@@ -23,6 +27,7 @@ import frc.robot.commands.AutoDoNothingCmdGrp;
 import frc.robot.commands.AutoDriveFwdCmdGrp;
 import frc.robot.commands.AutoLeftLV2CmdGrp;
 import frc.robot.commands.AutoRightLV2CmdGrp;
+import frc.robot.commands.GearShift;
 import frc.robot.subsystems.Encoders;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.LimeLight;
@@ -31,6 +36,8 @@ import jaci.pathfinder.PathfinderFRC;
 import jaci.pathfinder.Trajectory;
 import jaci.pathfinder.Trajectory.Config;
 import jaci.pathfinder.followers.EncoderFollower;
+import java.nio.file.Path;
+
 
 
 
@@ -48,13 +55,11 @@ public class Robot extends TimedRobot {
 
   private static final int kGyroPort = 0;
 
-  private static final String kPath = "RightRocket";
+  private static final String kPath = "RightRocket.right.pf1.csv";
 
   private AnalogGyro gyro;
-
   private EncoderFollower leftFollower;
   private EncoderFollower rightFollower;
-
   private Notifier followerNotifier;
 
   public static ExampleSubsystem m_subsystem = new ExampleSubsystem();
@@ -67,8 +72,9 @@ public class Robot extends TimedRobot {
   double KpDistance = -0.1;
   boolean firstPress8 = true;
   double startPosition;
-
- private void followPath(){
+  GearShift shiftGears = new GearShift(); 
+//------------------------------PATHFINDER CODE------------------------------------------------------------------------------------------------
+/* private void followPath(){
     if (leftFollower.isFinished() ||rightFollower.isFinished()){
       followerNotifier.stop();
     }
@@ -81,8 +87,8 @@ public class Robot extends TimedRobot {
       double turn = 0.8 * (-1.0/80.0) * headingDifference;
       RobotMap.dDrive.tankDrive((leftSpeed + turn), (rightSpeed - turn));
     }
-  } 
-
+  } */
+//---------------------------------------------------------------------------------------------------------------------------------------------
   @Override
   public void robotInit() {
     gyro = new AnalogGyro(kGyroPort);
@@ -116,21 +122,32 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
+    if(shiftGears != null){
+      shiftGears.cancel();
+    }
     m_autonomousCommand = m_chooser.getSelected();
-    /*
-     * if (m_autonomousCommand != null) { m_autonomousCommand.start(); }
-     */
-  
-    Trajectory rightTrajectory = PathfinderFRC.getTrajectory(kPath + ".left");
     
+      if (m_autonomousCommand != null) { m_autonomousCommand.start(); }
+     
   
+//----------------------------------------------PATHFINDER CODE-----------------------------------------------------------------------------------
+ /*   Trajectory left_trajectory = new Trajectory(1);
+    Trajectory right_trajectory = new Trajectory(1);
 
-    Trajectory leftTrajectory = PathfinderFRC.getTrajectory(kPath + ".right");
+    try {
     
+      left_trajectory = PathfinderFRC.getTrajectory(kPath + ".right.pf1.csv");
   
+  
+      right_trajectory = PathfinderFRC.getTrajectory(kPath + ".left.pf1.csv");
     
-    leftFollower = new EncoderFollower(leftTrajectory);
-    rightFollower = new EncoderFollower(rightTrajectory);
+    }
+    catch(IOException e){
+      e.printStackTrace();
+    }
+    
+    leftFollower = new EncoderFollower(left_trajectory);
+    rightFollower = new EncoderFollower(right_trajectory);
     //double position = Math.round(RobotMap.encoder0.getPosition());
 
     leftFollower.configureEncoder((int) RobotMap.encoder1.getPosition(), kTicksPerRev, kWheelDiameter / 254);
@@ -140,9 +157,10 @@ public class Robot extends TimedRobot {
     rightFollower.configurePIDVA(1.0, 0.0, 0.0, 1 / kMaxVelocity, 0);
 
     followerNotifier = new Notifier(this::followPath);
-    followerNotifier.startPeriodic(leftTrajectory.get(0).dt);
-
-    
+    if(followerNotifier != null){
+    followerNotifier.startPeriodic(left_trajectory.get(0).dt);
+    } */
+//-----------------------------------------------------------------------------------------------------------------------------    
 
   }
 
@@ -159,9 +177,13 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
-    
+    if(followerNotifier != null)
+    {
     followerNotifier.stop();
+    }
     RobotMap.dDrive.tankDrive(0,0);
+
+    shiftGears.start(); //continually check to see if gears need to be shifted. May need to go in Teleop Periodic.
 
     startPosition = RobotMap.liftMotor.getSelectedSensorPosition();
   }
@@ -191,6 +213,9 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Target Valid", v);
     SmartDashboard.putNumber("Drive Distance", encoder.getEncoder0Distance());
     SmartDashboard.putNumber("Lift Encoder Distance", RobotMap.liftMotor.getSelectedSensorPosition());
+    SmartDashboard.putNumber("RPMs ", RobotMap.encoder0.getVelocity());
+    
+  
 
     RobotMap.dDrive.arcadeDrive(-m_oi.driveStick.getRawAxis(1)*.8,m_oi.driveStick.getRawAxis(4)*.5);
    

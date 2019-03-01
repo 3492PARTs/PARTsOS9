@@ -8,15 +8,20 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.*;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 
 public class GearShift extends Command {
     private OI m_oi;
+    private Boolean highGear = false;
+    private Boolean TimesUp = false;
+    long startTime;
   public GearShift() {
       m_oi = new OI();
     requires(Robot.m_subsystem);
   }
+
 
   @Override
   protected void initialize() {
@@ -25,10 +30,15 @@ public class GearShift extends Command {
   @Override
   protected void execute() {
       if (Math.abs(RobotMap.encoder0.getVelocity()) >= 1500){
-          RobotMap.solenoidStan.set(DoubleSolenoid.Value.kForward);
+            RobotMap.solenoidStan.set(DoubleSolenoid.Value.kForward);
+            highGear = true;
+            SmartDashboard.putBoolean("Gear shifted to high ", highGear);
+        
       }
-      else if (m_oi.driveStick.getRawAxis(1) < 0.01){
+      else if (Math.abs(m_oi.driveStick.getRawAxis(1)) < 0.01){
           RobotMap.solenoidStan.set(DoubleSolenoid.Value.kReverse);
+          highGear = false;
+          SmartDashboard.putBoolean("Gear shifted to high ", highGear);
       }
   }
 
