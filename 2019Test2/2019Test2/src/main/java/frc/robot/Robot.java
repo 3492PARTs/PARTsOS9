@@ -15,6 +15,7 @@ import java.io.IOException;
 
 import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
@@ -37,6 +38,7 @@ import jaci.pathfinder.Trajectory;
 import jaci.pathfinder.Trajectory.Config;
 import jaci.pathfinder.followers.EncoderFollower;
 import java.nio.file.Path;
+import edu.wpi.first.wpilibj.CameraServer;
 
 
 
@@ -55,7 +57,7 @@ public class Robot extends TimedRobot {
 
   private static final int kGyroPort = 0;
 
-  private static final String kPath = "RightRocket.right.pf1.csv";
+  private static final String kPath = "RightRocket";
 
   private AnalogGyro gyro;
   private EncoderFollower leftFollower;
@@ -72,6 +74,7 @@ public class Robot extends TimedRobot {
   double KpDistance = -0.1;
   boolean firstPress8 = true;
   double startPosition;
+  double startPositionArm;
   GearShift shiftGears = new GearShift(); 
 //------------------------------PATHFINDER CODE------------------------------------------------------------------------------------------------
 /* private void followPath(){
@@ -91,10 +94,9 @@ public class Robot extends TimedRobot {
 //---------------------------------------------------------------------------------------------------------------------------------------------
   @Override
   public void robotInit() {
+    CameraServer.getInstance().startAutomaticCapture();
     gyro = new AnalogGyro(kGyroPort);
-    
     RobotMap.liftMotor2.set(ControlMode.Follower, 14);
-    RobotMap.intake2.set(ControlMode.Follower, 11);
     m_oi = new OI();
     SmartDashboard.putData("Auto mode", m_chooser);
     m_chooser.setDefaultOption("Default Auto", new AutoDriveFwdCmdGrp());
@@ -131,9 +133,9 @@ public class Robot extends TimedRobot {
      
   
 //----------------------------------------------PATHFINDER CODE-----------------------------------------------------------------------------------
- /*   Trajectory left_trajectory = new Trajectory(1);
+    Trajectory left_trajectory = new Trajectory(1);
     Trajectory right_trajectory = new Trajectory(1);
-
+    /*
     try {
     
       left_trajectory = PathfinderFRC.getTrajectory(kPath + ".right.pf1.csv");
@@ -186,6 +188,8 @@ public class Robot extends TimedRobot {
     shiftGears.start(); //continually check to see if gears need to be shifted. May need to go in Teleop Periodic.
 
     startPosition = RobotMap.liftMotor.getSelectedSensorPosition();
+    startPositionArm = RobotMap.armMotor.getSelectedSensorPosition();
+    SmartDashboard.putNumber("start position arm", RobotMap.armMotor.getSelectedSensorPosition());
   }
   ArmPosition armPosition = ArmPosition.home;
   @Override
@@ -213,11 +217,12 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Target Valid", v);
     SmartDashboard.putNumber("Drive Distance Teleop", encoder.getEncoder0Distance());
     SmartDashboard.putNumber("Lift Encoder Distance", RobotMap.liftMotor.getSelectedSensorPosition());
+    SmartDashboard.putNumber("Arm Encoder Distance", RobotMap.armMotor.getSelectedSensorPosition());
     SmartDashboard.putNumber("RPMs ", RobotMap.encoder0.getVelocity());
     
   
 
-    RobotMap.dDrive.arcadeDrive(-m_oi.driveStick.getRawAxis(1)*.8,m_oi.driveStick.getRawAxis(4)*.5);
+    RobotMap.dDrive.arcadeDrive(-m_oi.driveStick.getRawAxis(1)*.8,m_oi.driveStick.getRawAxis(4));
    
     double Kp = -0.06;
     double min_command = -0.03;
@@ -225,8 +230,10 @@ public class Robot extends TimedRobot {
     double rightCommand = 0;
     double steering_adjust = 0;double startPos;
     double distanceAdjust = 0;
+   //---------------------------------------VISION PROCESSING-----------------------------------------------------------------------------------------------
     
     //AIMING AIMING AIMING AIMING
+
    if(m_oi.driveStick.getRawButton(4)){  //Y
       double heading_error = -x;
       if(x > 1.0){
@@ -238,9 +245,11 @@ public class Robot extends TimedRobot {
       leftCommand += steering_adjust;
       rightCommand -= steering_adjust;
       RobotMap.dDrive.tankDrive(leftCommand*.75,rightCommand*.75);      
-    } //END AIMING 
+    }
+     //END AIMING 
 
-    //SEEKING SEEKING SEEKING SEEKING
+  /*  //SEEKING SEEKING SEEKING SEEKING
+    
     double kP2 = -0.03;
     if(m_oi.driveStick.getRawButton(3)){        
         if(v==0.0){
@@ -269,6 +278,7 @@ public class Robot extends TimedRobot {
     } 
     //END SEEKING
     
+    // DESTROY
     double KpAim = -0.1;
     double minAimCommand = 0.05;
     if (m_oi.driveStick.getRawButton(5))
@@ -287,39 +297,57 @@ public class Robot extends TimedRobot {
       rightCommand -= steeringAdjust + distanceAdjust;
       //The multiplier for the speed here does NOT make the actual speed go down by that much.
       RobotMap.dDrive.tankDrive((leftCommand)*.3,(-rightCommand)*.3);
-    } 
-  // end aim, seek, destroy
-    if(m_oi.driveStick.getRawButton(1)){
+    }  
+  */ // END DESTROY 
+    //-------------------------------------------------VISION PROCESSING------------------------------------------------------------------------------------------- 
+     
+    /*if(m_oi.driveStick.getRawButton(1)){
       RobotMap.solenoidSteve.set(DoubleSolenoid.Value.kForward);
     } 
 
     if(m_oi.driveStick.getRawButton(2)){
       RobotMap.solenoidSteve.set(DoubleSolenoid.Value.kReverse);
-    }  
-    
-    //if(m_oi.driveStick.getRawButton(3)){
-    //   RobotMap.armMotor.set(ControlMode.PercentOutput, 1);
-    // }
-    // else if(m_oi.driveStick.getRawButton(4)){
-    //   RobotMap.armMotor.set(ControlMode.PercentOutput, -1);
-    // }
-    // else{
-    //   RobotMap.armMotor.set(ControlMode.PercentOutput, 0);
-    // }
+    }*/
+    if(m_oi.driveStick.getRawButton(1)){ //intake hatch - A
+      RobotMap.solenoidSteve.set(true);
+    }
+    else{
+      RobotMap.solenoidSteve.set(false);
+    }
+    if(m_oi.launchPad.getRawButton(11)){ //ARM IN
+       if(RobotMap.armMotor.getSelectedSensorPosition() > (startPositionArm + 200)){
+        RobotMap.armMotor.set(ControlMode.PercentOutput, .8); //stop
+        }
+        else if (RobotMap.armMotor.getSelectedSensorPosition() < (startPositionArm + 200)){
+        RobotMap.armMotor.set(ControlMode.PercentOutput, 0); //down
+        }
+      }
+     else if(m_oi.launchPad.getRawButton(10)){ //ARM OUT
+       if((RobotMap.armMotor.getSelectedSensorPosition() - startPositionArm) < (5764)){
+          RobotMap.armMotor.set(ControlMode.PercentOutput, -.8);
+        } 
+        else if((RobotMap.armMotor.getSelectedSensorPosition() - startPositionArm) > (5764)){
+          RobotMap.armMotor.set(ControlMode.PercentOutput, 0); 
+        } 
+      }
+     else{
+       RobotMap.armMotor.set(ControlMode.PercentOutput, 0);
+       //SmartDashboard.putNumber(("Arm Encoder Distance WHEN STOPPED"), RobotMap.armMotor.getSelectedSensorPosition());
+      }
 
-    // if(m_oi.driveStick.getRawButton(5)){
-    //   RobotMap.intake.set(ControlMode.PercentOutput, 1);
-    // }
-    else if(m_oi.driveStick.getRawButton(6)){
-      RobotMap.intake.set(ControlMode.PercentOutput, -.775);
+     if(m_oi.driveStick.getRawButton(5)){ //IN - LB
+       RobotMap.intake.set(ControlMode.PercentOutput, 1);
+     }
+    else if(m_oi.driveStick.getRawButton(6)){ //OUT - RB
+      RobotMap.intake.set(ControlMode.PercentOutput, -.5);
     }
     else{
       RobotMap.intake.set(ControlMode.PercentOutput, 0);
-    }
-    if(m_oi.launchPad.getRawButton(1)){
+    } 
+    if(m_oi.launchPad.getRawButton(1)){ //MANUAL DOWN
       RobotMap.liftMotor.set(ControlMode.PercentOutput, 1);
     }
-    else if(m_oi.launchPad.getRawButton(3)){
+    else if(m_oi.launchPad.getRawButton(3)){ //MANUAL UP
       RobotMap.liftMotor.set(ControlMode.PercentOutput, -1);
     }
     else{
@@ -355,6 +383,7 @@ public class Robot extends TimedRobot {
         RobotMap.liftMotor.set(ControlMode.PercentOutput, 1); //down
       }
     }
+
   }
 
   

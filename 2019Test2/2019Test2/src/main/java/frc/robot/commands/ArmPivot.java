@@ -36,7 +36,7 @@ public class ArmPivot extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    switch(armPosition){
+   /* switch(armPosition){
       case _45:
         return RobotMap.armEncoder.getDistance() >= 1;
       case _180:
@@ -45,11 +45,10 @@ public class ArmPivot extends Command {
         return RobotMap.armEncoder.getDistance() <= 1;
       case miss:
         return RobotMap.armEncoder.getDistance() >= 1;
-      default:
+      default:*/
         return true;
     }
-  }
-
+  
   // Called once after isFinished returns true
   @Override
   protected void end() {

@@ -53,12 +53,12 @@ public class Lift extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    if (RobotMap.liftEncoder.getDistance() > distance){
+    /*if (RobotMap.liftEncoder.getDistance() > distance){
       RobotMap.liftMotor.set(ControlMode.PercentOutput, -0.5);
     }
     else{
       RobotMap.liftMotor.set(ControlMode.PercentOutput, 0.5);
-    }
+    }*/
     
   }
 

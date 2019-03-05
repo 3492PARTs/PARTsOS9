@@ -1,0 +1,10 @@
+{
+  "lengthUnit": "Inch",
+  "timeStep": 0.02,
+  "maxVelocity": 216.0,
+  "maxAcceleration": 78.72,
+  "maxJerk": 2364.0,
+  "wheelBase": 23.5,
+  "gameName": "Destination: Deep Space",
+  "outputDir": "../2019Test2/src/main/deploy/paths"
+}

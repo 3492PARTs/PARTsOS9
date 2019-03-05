@@ -18,12 +18,12 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.*;
 import edu.wpi.first.wpilibj.Encoder;
-
+import edu.wpi.first.wpilibj.Solenoid;
 
 public class RobotMap {
   //pneumatics 
   public static Compressor c = new Compressor (0);
-  public static DoubleSolenoid solenoidSteve = new DoubleSolenoid(3, 2);
+ // public static DoubleSolenoid solenoidSteve = new DoubleSolenoid(3, 2);
   public static DoubleSolenoid solenoidStan = new DoubleSolenoid(1, 0); //TODO: change values and this is gear shifter solenoid
 
   public static final int[] canID = {0, 1, 2, 3};
@@ -40,11 +40,9 @@ public class RobotMap {
   //Lift motor - talon
   public static TalonSRX liftMotor = new TalonSRX(14);
   public static TalonSRX liftMotor2 = new TalonSRX(15);
-  public static TalonSRX armMotor = new TalonSRX(0);
+  public static TalonSRX armMotor = new TalonSRX(5);
   public static TalonSRX intake = new TalonSRX(11);
-  public static TalonSRX intake2 = new TalonSRX(5);
-  public static Encoder armEncoder = new Encoder(1,0);
-  public static Encoder liftEncoder = new Encoder(3,2);
+  public static Solenoid solenoidSteve = new Solenoid(4);
  
   // This set for practice robot. Be sure to comment out the main robot definitions when running practice bot.
   /*
