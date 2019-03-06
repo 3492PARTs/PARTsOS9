@@ -22,7 +22,6 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.commands.ArmPosition;
 import frc.robot.commands.AutoCenterCmdGrp;
 import frc.robot.commands.AutoDoNothingCmdGrp;
 import frc.robot.commands.AutoDriveFwdCmdGrp;
@@ -191,7 +190,6 @@ public class Robot extends TimedRobot {
     startPositionArm = RobotMap.armMotor.getSelectedSensorPosition();
     SmartDashboard.putNumber("start position arm", RobotMap.armMotor.getSelectedSensorPosition());
   }
-  ArmPosition armPosition = ArmPosition.home;
   @Override
   public void teleopPeriodic() {
 
@@ -222,7 +220,7 @@ public class Robot extends TimedRobot {
     
   
 
-    RobotMap.dDrive.arcadeDrive(-m_oi.driveStick.getRawAxis(1)*.8,m_oi.driveStick.getRawAxis(4));
+    RobotMap.dDrive.arcadeDrive(-m_oi.driveStick.getRawAxis(1)*.8,m_oi.driveStick.getRawAxis(4)*0.75);
    
     double Kp = -0.06;
     double min_command = -0.03;
@@ -314,6 +312,14 @@ public class Robot extends TimedRobot {
     else{
       RobotMap.solenoidSteve.set(false);
     }
+
+   /* if(m_oi.driveStick.getRawAxis(3) > 0.5){ //HATCH LATCH - RT
+      RobotMap.solenoidSarah.set(true);
+    }
+    else{
+      RobotMap.solenoidSarah.set(false);
+    } */
+
     if(m_oi.launchPad.getRawButton(11)){ //ARM IN
        if(RobotMap.armMotor.getSelectedSensorPosition() > (startPositionArm + 200)){
         RobotMap.armMotor.set(ControlMode.PercentOutput, .8); //stop
@@ -335,11 +341,19 @@ public class Robot extends TimedRobot {
        //SmartDashboard.putNumber(("Arm Encoder Distance WHEN STOPPED"), RobotMap.armMotor.getSelectedSensorPosition());
       }
 
+      if(m_oi.driveStick.getRawButton(3)){ //MANUAL OUT - B
+        RobotMap.armMotor.set(ControlMode.PercentOutput, -1);
+      }
+
+      if(m_oi.driveStick.getRawButton(2)){ //MANUAL IN - X
+        RobotMap.armMotor.set(ControlMode.PercentOutput, .8);
+      }
+
      if(m_oi.driveStick.getRawButton(5)){ //IN - LB
        RobotMap.intake.set(ControlMode.PercentOutput, 1);
      }
     else if(m_oi.driveStick.getRawButton(6)){ //OUT - RB
-      RobotMap.intake.set(ControlMode.PercentOutput, -.5);
+      RobotMap.intake.set(ControlMode.PercentOutput, -1);
     }
     else{
       RobotMap.intake.set(ControlMode.PercentOutput, 0);

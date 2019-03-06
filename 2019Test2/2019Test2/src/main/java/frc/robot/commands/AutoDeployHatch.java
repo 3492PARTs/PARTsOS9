@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.*;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 
-/*public class AutoDeployHatch extends Command {
+public class AutoDeployHatch extends Command {
 private long exeTime;
   public AutoDeployHatch() {
   }
@@ -21,9 +21,9 @@ private long exeTime;
     exeTime = System.currentTimeMillis();
   }
 
- /* @Override
+  @Override
   protected void execute() {
-    RobotMap.solenoidSteve.set(DoubleSolenoid.Value.kForward);
+    RobotMap.solenoidSteve.set(true);
   }
 
   @Override
@@ -34,11 +34,10 @@ private long exeTime;
   @Override
   protected void end() {    
     System.out.println("hatch deployed");
-    RobotMap.solenoidSteve.set(DoubleSolenoid.Value.kReverse);
+    RobotMap.solenoidSteve.set(true);
   }
 
   @Override
   protected void interrupted() {
   }
 }
-*/

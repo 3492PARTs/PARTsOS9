@@ -15,7 +15,7 @@ public class AutoRightLV2CmdGrp extends CommandGroup {
     addSequential(new AutoTurn(1, 18.84));
     addSequential(new AutoSeekAimDestroy(-1, 5)); //seekDirection, destroyDistance
     addSequential(new AutoDriveStraight(20, 1));
-   // addSequential(new AutoDeployHatch());
+    addSequential(new AutoDeployHatch());
     addSequential(new AutoDriveStraight(10,-1));//distance, direction
     addSequential(new AutoTurn(1, 28.26)); //direction(assuming right is positive), distance 
     addSequential(new AutoSeekAimDestroy(1, 5)); //seekDirection, destroyDistance
@@ -25,7 +25,7 @@ public class AutoRightLV2CmdGrp extends CommandGroup {
     addSequential(new AutoSeekAimDestroy(1, 5));
     addSequential(new Lift(LiftLevel.Middle));
     addSequential(new AutoDriveStraight(10, 1));
-    //addSequential(new AutoDeployHatch());
+    addSequential(new AutoDeployHatch());
     addSequential(new AutoDriveStraight(10, -1));
     addSequential(new Lift(LiftLevel.Low));
     addSequential(new AutoTurn(-1, 18.84));
