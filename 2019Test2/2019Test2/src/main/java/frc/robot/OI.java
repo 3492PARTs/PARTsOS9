@@ -7,7 +7,10 @@
 
 package frc.robot;
 
+import java.awt.Button;
+
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.buttons.JoystickButton;
 
 /**
  * This class is the glue that binds the controls on the physical operator
@@ -17,6 +20,11 @@ public class OI {
   public Joystick driveStick = new Joystick(0);
   public Joystick controlStick = new Joystick(1);
   public Joystick launchPad = new Joystick(2);
+
+  public JoystickButton high = new JoystickButton(launchPad, 9);
+  public JoystickButton middle = new JoystickButton(launchPad, 8);
+  public JoystickButton low = new JoystickButton(launchPad, 5);
+  public JoystickButton cancelLift = new JoystickButton(launchPad, 6);
 
   public Joystick getdriveStick(){
     return driveStick;

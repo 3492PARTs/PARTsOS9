@@ -12,15 +12,14 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.RobotMap;
 
-enum LiftLevel{
-  Low, Middle, High;
-}
+
 
 
 public class Lift extends Command {
 
   private LiftLevel liftLevel;
   private double distance;
+  private  boolean up = false, down = false;
 
   public Lift(LiftLevel liftLevel) {
     // Use requires() here to declare subsystem dependencies
@@ -33,45 +32,56 @@ public class Lift extends Command {
   protected void initialize() {
     switch(liftLevel){
       case Low: 
-        distance = 0;//startPosition- need to make command for it
+        distance = -600;//startPosition- need to make command for it
       break;
 
       case Middle:
-        distance = -34206; //TODO: change values
+        distance = -35406; //TODO: change values
       break;
 
       case High:
-        distance = -70270;
+        distance = -71470;
       break;
 
       default:
-      distance = 0;
+      distance = -600;
       break;
+    }
+
+    if (RobotMap.liftMotor.getSelectedSensorPosition() > distance){
+      up = true; // up
+    }
+    else{
+      down = true; // down
     }
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    /*if (RobotMap.liftEncoder.getDistance() > distance){
-      RobotMap.liftMotor.set(ControlMode.PercentOutput, -0.5);
+    if (RobotMap.liftMotor.getSelectedSensorPosition() > distance){
+      RobotMap.liftMotor.set(ControlMode.PercentOutput, -1);
     }
     else{
-      RobotMap.liftMotor.set(ControlMode.PercentOutput, 0.5);
-    }*/
+      RobotMap.liftMotor.set(ControlMode.PercentOutput, 1);
+    }
     
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return RobotMap.liftMotor.getSelectedSensorPosition() < (distance + 0.5) || RobotMap.liftMotor.getSelectedSensorPosition() > (distance - 0.5);
-  //change the 0.5
+    System.out.println("running lift: going to " + distance + " currently at: " + RobotMap.liftMotor.getSelectedSensorPosition());
+    if(up && RobotMap.liftMotor.getSelectedSensorPosition() < distance) return true;
+    if (down && RobotMap.liftMotor.getSelectedSensorPosition() > distance) return true;
+    return false;
+    //change the 0.5
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
+    System.out.println("end lift");
   }
 
   // Called when another command which requires one or more of the same
