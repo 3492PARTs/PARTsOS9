@@ -4,7 +4,8 @@
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in the root directory of */
 /* the project.                                                               */
-/*----------------------------------------------------------------------------*/
+/*-------------------
+---------------------------------------------------------*/
 
 package frc.robot;
 
@@ -18,6 +19,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -74,7 +76,7 @@ public class Robot extends TimedRobot {
   boolean firstPress8 = true;
   double startPosition;
   double startPositionArm;
-  GearShift shiftGears = new GearShift(); 
+  //GearShift shiftGears = new GearShift(); 
 //------------------------------PATHFINDER CODE------------------------------------------------------------------------------------------------
 /* private void followPath(){
     if (leftFollower.isFinished() ||rightFollower.isFinished()){
@@ -93,16 +95,21 @@ public class Robot extends TimedRobot {
 //---------------------------------------------------------------------------------------------------------------------------------------------
   @Override
   public void robotInit() {
+
     CameraServer.getInstance().startAutomaticCapture();
+    //CameraServer.getInstance().getVideo();
+    startPosition = RobotMap.liftMotor.getSelectedSensorPosition();
+    startPositionArm = RobotMap.armMotor.getSelectedSensorPosition();
+    SmartDashboard.putNumber("start position arm", RobotMap.armMotor.getSelectedSensorPosition());
     gyro = new AnalogGyro(kGyroPort);
-    RobotMap.liftMotor2.set(ControlMode.Follower, 14);
+    RobotMap.liftMotor2.set(ControlMode.Follower, 15);
     m_oi = new OI();
-    SmartDashboard.putData("Auto mode", m_chooser);
+    /*SmartDashboard.putData("Auto mode", m_chooser);
     m_chooser.setDefaultOption("Default Auto", new AutoDriveFwdCmdGrp());
     m_chooser.addOption("RightRocketLV2Auto", new AutoRightLV2CmdGrp());
     m_chooser.addOption("LeftRocketLV2Auto", new AutoLeftLV2CmdGrp());
     m_chooser.addOption("CenterCargoAuto", new AutoCenterCmdGrp());
-    m_chooser.addOption("DoNothingAuto", new AutoDoNothingCmdGrp());    
+    m_chooser.addOption("DoNothingAuto", new AutoDoNothingCmdGrp());*/    
     RobotMap.c.setClosedLoopControl(true);
     RobotMap.solenoidStan.set(DoubleSolenoid.Value.kReverse); //TODO: check if forward is low gear
   }
@@ -123,17 +130,21 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    if(shiftGears != null){
+    /*if(shiftGears != null){
       shiftGears.cancel();
-    }
-    m_autonomousCommand = m_chooser.getSelected();
+    }*/
+    /*m_autonomousCommand = m_chooser.getSelected();
     
-      if (m_autonomousCommand != null) { m_autonomousCommand.start(); }
+  if (m_autonomousCommand != null) { m_autonomousCommand.start(); */
+  
+   // startPosition = RobotMap.liftMotor.getSelectedSensorPosition();
+    //startPositionArm = RobotMap.armMotor.getSelectedSensorPosition();
+  
      
   
 //----------------------------------------------PATHFINDER CODE-----------------------------------------------------------------------------------
-    Trajectory left_trajectory = new Trajectory(1);
-    Trajectory right_trajectory = new Trajectory(1);
+    //Trajectory left_trajectory = new Trajectory(1);
+    //Trajectory right_trajectory = new Trajectory(1);
     /*
     try {
     
@@ -171,6 +182,139 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {
     Scheduler.getInstance().run();
     SmartDashboard.putNumber("DriveDistanceAuto", encoder.getEncoder0Distance());
+
+    Scheduler.getInstance().run();
+    double x = limeLight.getX();
+    double y = limeLight.getY();
+    double area = limeLight.getArea();
+    double v = limeLight.getV();
+    SmartDashboard.putNumber("LimelightX", x);
+    SmartDashboard.putNumber("LimelightY", y);
+    SmartDashboard.putNumber("LimelightArea", area);
+    SmartDashboard.putNumber("Target Valid", v);
+    SmartDashboard.putNumber("Drive Distance Teleop", encoder.getEncoder0Distance());
+    SmartDashboard.putNumber("Lift Encoder Distance", RobotMap.liftMotor.getSelectedSensorPosition());
+    SmartDashboard.putNumber("Arm Encoder Distance", RobotMap.armMotor.getSelectedSensorPosition());
+    SmartDashboard.putNumber("RPMs ", RobotMap.encoder0.getVelocity());
+    
+  
+
+    RobotMap.dDrive.arcadeDrive(-m_oi.driveStick.getRawAxis(1)*.8,m_oi.driveStick.getRawAxis(4)*0.75);
+   
+    double Kp = -0.06;
+    double min_command = -0.03;
+    double leftCommand = 0;
+    double rightCommand = 0;
+    double steering_adjust = 0;double startPos;
+    double distanceAdjust = 0;
+   //---------------------------------------VISION PROCESSING-----------------------------------------------------------------------------------------------
+    
+    //AIMING AIMING AIMING AIMING
+
+   if(m_oi.driveStick.getRawButton(4)){  //Y
+      double heading_error = -x;
+      if(x > 1.0){
+        steering_adjust = Kp * heading_error - min_command; 
+      }
+      else if (x < -1.0){
+        steering_adjust = Kp * heading_error + min_command; 
+      }
+      leftCommand += steering_adjust;
+      rightCommand -= steering_adjust;
+      RobotMap.dDrive.tankDrive(leftCommand*.75,rightCommand*.75);      
+    }
+
+   /* if(m_oi.driveStick.getRawButton(1)){ 
+      RobotMap.solenoidSteve.set(true);
+    }
+    else{
+      RobotMap.solenoidSteve.set(false);
+    }*/
+
+    if(m_oi.driveStick.getRawAxis(3) > 0.8){ //HATCH  - RT
+      RobotMap.solenoidSteve.set(true);
+    }
+    else{
+      RobotMap.solenoidSteve.set(false);
+    } 
+
+    if(m_oi.launchPad.getRawButton(11)){ //ARM IN
+       if(RobotMap.armMotor.getSelectedSensorPosition() > (startPositionArm + 200)){
+        RobotMap.armMotor.set(ControlMode.PercentOutput, .8); //stop
+        }
+        else if (RobotMap.armMotor.getSelectedSensorPosition() < (startPositionArm + 200)){
+        RobotMap.armMotor.set(ControlMode.PercentOutput, 0); //down
+        }
+      }
+     else if(m_oi.launchPad.getRawButton(10)){ //ARM OUT
+       if((RobotMap.armMotor.getSelectedSensorPosition() - startPositionArm) < (5711)){
+          RobotMap.armMotor.set(ControlMode.PercentOutput, -.8);
+        } 
+        else if((RobotMap.armMotor.getSelectedSensorPosition() - startPositionArm) > (5711)){
+          RobotMap.armMotor.set(ControlMode.PercentOutput, 0); 
+        } 
+      }
+     else{
+       RobotMap.armMotor.set(ControlMode.PercentOutput, 0);
+       //SmartDashboard.putNumber(("Arm Encoder Distance WHEN STOPPED"), RobotMap.armMotor.getSelectedSensorPosition());
+      }
+
+      if(m_oi.driveStick.getRawButton(3)){ //MANUAL OUT - B
+        RobotMap.armMotor.set(ControlMode.PercentOutput, -1);
+      }
+
+      if(m_oi.driveStick.getRawButton(2)){ //MANUAL IN - X
+        RobotMap.armMotor.set(ControlMode.PercentOutput, .8);
+      }
+
+     if(m_oi.driveStick.getRawButton(5)){ //IN - LB
+       RobotMap.intake.set(ControlMode.PercentOutput, 1);
+     }
+    else if(m_oi.driveStick.getRawButton(6)){ //OUT - RB
+      RobotMap.intake.set(ControlMode.PercentOutput, -1);
+    }
+    else{
+      RobotMap.intake.set(ControlMode.PercentOutput, 0);
+    } 
+    if(m_oi.launchPad.getRawButton(1)){ //MANUAL DOWN
+      RobotMap.liftMotor.set(ControlMode.PercentOutput, 1);
+    }
+    else if(m_oi.launchPad.getRawButton(3)){ //MANUAL UP
+      RobotMap.liftMotor.set(ControlMode.PercentOutput, -1);
+    }
+    else{
+      RobotMap.liftMotor.set(ControlMode.PercentOutput, 0);
+    }
+    
+    if (m_oi.launchPad.getRawButton(8)){
+      if((RobotMap.liftMotor.getSelectedSensorPosition() - startPosition) < -34206){
+        RobotMap.liftMotor.set(ControlMode.PercentOutput, 1); //down
+      } else if(RobotMap.liftMotor.getSelectedSensorPosition() - startPosition > -34206){
+        RobotMap.liftMotor.set(ControlMode.PercentOutput, -1); //up
+      }
+      else RobotMap.liftMotor.set(ControlMode.PercentOutput, 0);
+    }
+    
+    if (m_oi.launchPad.getRawButton(9)){
+      if((RobotMap.liftMotor.getSelectedSensorPosition() - startPosition) < -70270){
+        RobotMap.liftMotor.set(ControlMode.PercentOutput, 1); //down
+      }
+      else if((RobotMap.liftMotor.getSelectedSensorPosition() - startPosition) > -70270){
+        RobotMap.liftMotor.set(ControlMode.PercentOutput, -1); //up
+      }
+      else{
+        RobotMap.liftMotor.set(ControlMode.PercentOutput, 0);
+      }
+    }
+
+    if(m_oi.launchPad.getRawButton(5)){
+      if(RobotMap.liftMotor.getSelectedSensorPosition() > (startPosition - 500)){
+        RobotMap.liftMotor.set(ControlMode.PercentOutput, 0); //stop
+      }
+      else if (RobotMap.liftMotor.getSelectedSensorPosition() < (startPosition - 500)){
+        RobotMap.liftMotor.set(ControlMode.PercentOutput, 1); //down
+      }
+    }
   }
 
   @Override
@@ -182,13 +326,14 @@ public class Robot extends TimedRobot {
     {
     followerNotifier.stop();
     }
+
     RobotMap.dDrive.tankDrive(0,0);
 
-    shiftGears.start(); //continually check to see if gears need to be shifted. May need to go in Teleop Periodic.
+    //shiftGears.start(); //continually check to see if gears need to be shifted. May need to go in Teleop Periodic.
 
-    startPosition = RobotMap.liftMotor.getSelectedSensorPosition();
-    startPositionArm = RobotMap.armMotor.getSelectedSensorPosition();
-    SmartDashboard.putNumber("start position arm", RobotMap.armMotor.getSelectedSensorPosition());
+    // startPosition = RobotMap.liftMotor.getSelectedSensorPosition();
+    // startPositionArm = RobotMap.armMotor.getSelectedSensorPosition();
+    // SmartDashboard.putNumber("start position arm", RobotMap.armMotor.getSelectedSensorPosition());
   }
   @Override
   public void teleopPeriodic() {
@@ -218,8 +363,8 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Arm Encoder Distance", RobotMap.armMotor.getSelectedSensorPosition());
     SmartDashboard.putNumber("RPMs ", RobotMap.encoder0.getVelocity());
     
-  
-
+    SmartDashboard.putNumber("OutPut current1", RobotMap.frontLeftMotor.getOutputCurrent());
+    //SmartDashboard.putNumber("OutPut current0", RobotMap.backLeftMotor;
     RobotMap.dDrive.arcadeDrive(-m_oi.driveStick.getRawAxis(1)*.8,m_oi.driveStick.getRawAxis(4)*0.75);
    
     double Kp = -0.06;
@@ -308,17 +453,18 @@ public class Robot extends TimedRobot {
     }*/
     if(m_oi.driveStick.getRawButton(1)){ //intake hatch - A
       RobotMap.solenoidSteve.set(true);
+      
     }
     else{
       RobotMap.solenoidSteve.set(false);
     }
 
-   /* if(m_oi.driveStick.getRawAxis(3) > 0.5){ //HATCH LATCH - RT
-      RobotMap.solenoidSarah.set(true);
+   if(m_oi.driveStick.getRawAxis(3) > 0.8){ //HATCH LATCH - RT
+      RobotMap.solenoidSarah.set(DoubleSolenoid.Value.kForward);
     }
     else{
-      RobotMap.solenoidSarah.set(false);
-    } */
+      RobotMap.solenoidSarah.set(DoubleSolenoid.Value.kReverse);
+    } 
 
     if(m_oi.launchPad.getRawButton(11)){ //ARM IN
        if(RobotMap.armMotor.getSelectedSensorPosition() > (startPositionArm + 200)){
