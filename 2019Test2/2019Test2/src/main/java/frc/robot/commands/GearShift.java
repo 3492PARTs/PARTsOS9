@@ -33,7 +33,8 @@ public class GearShift extends Command {
 
   @Override
   protected void execute() {
-    if (Math.abs(RobotMap.encoder0.getVelocity()) >= 3200){
+    RobotMap.solenoidStan.set(DoubleSolenoid.Value.kForward);
+    /*if (Math.abs(RobotMap.encoder0.getVelocity()) >= 3200){
       if (hold){
         stTime = System.currentTimeMillis();
         hold = false;
@@ -50,7 +51,7 @@ public class GearShift extends Command {
       SmartDashboard.putBoolean("Gear shifted to high ", highGear);
       hold = true;
     }
-    else if (Math.abs(RobotMap.encoder0.getVelocity()) < 3200) hold = true;
+    else if (Math.abs(RobotMap.encoder0.getVelocity()) < 3200) hold = true;*/
   }
 
   @Override

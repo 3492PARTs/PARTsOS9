@@ -316,7 +316,7 @@ public class Robot extends TimedRobot {
     RobotMap.dDrive.tankDrive(0, 0);
 
 
-     shiftGears.start(); //continually check to see if gears need to be shifted.
+     //shiftGears.start(); //continually check to see if gears need to be shifted.
     // May need to go in Teleop Periodic.
 
     // startPosition = RobotMap.liftMotor.getSelectedSensorPosition();
@@ -325,6 +325,7 @@ public class Robot extends TimedRobot {
     // RobotMap.armMotor.getSelectedSensorPosition());
   }
 
+  private boolean shiftToggle = true;
   @Override
   public void teleopPeriodic() {
 
@@ -420,6 +421,19 @@ public class Robot extends TimedRobot {
      * 
      * } else{ RobotMap.solenoidSteve.set(false); }
      */
+      if(m_oi.driveStick.getRawButton(1)){
+        if(shiftToggle){
+          RobotMap.solenoidStan.set(DoubleSolenoid.Value.kForward);
+          shiftToggle = false;
+          
+        }
+        else if(!shiftToggle){
+        RobotMap.solenoidStan.set(DoubleSolenoid.Value.kReverse);
+        shiftToggle = true;
+        }
+      }
+      SmartDashboard.putBoolean("Gear Shifted to Low", shiftToggle);
+
     if (m_oi.driveStick.getRawAxis(3) > 0.8) { // HATCH LATCH - RT
       RobotMap.solenoidSteve.set(true);
     } else {
