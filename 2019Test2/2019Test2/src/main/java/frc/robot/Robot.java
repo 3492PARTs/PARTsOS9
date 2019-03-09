@@ -73,7 +73,7 @@ public class Robot extends TimedRobot {
   double startPosition;
   double startPositionArm;
 
-  // GearShift shiftGears = new GearShift();
+  GearShift shiftGears = new GearShift();
   // ------------------------------PATHFINDER CODE------------------------------------------------------------------------------------------------
   /*
    * private void followPath(){ if (leftFollower.isFinished()
@@ -92,7 +92,6 @@ public class Robot extends TimedRobot {
   public void robotInit() {
 
     CameraServer.getInstance().startAutomaticCapture();
-    // CameraServer.getInstance().getVideo();
     startPosition = RobotMap.liftMotor.getSelectedSensorPosition();
     startPositionArm = RobotMap.armMotor.getSelectedSensorPosition();
     SmartDashboard.putNumber("start position arm", RobotMap.armMotor.getSelectedSensorPosition());
@@ -132,6 +131,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
+
     /*
      * if(shiftGears != null){ shiftGears.cancel(); }
      */
@@ -315,7 +315,8 @@ public class Robot extends TimedRobot {
 
     RobotMap.dDrive.tankDrive(0, 0);
 
-    // shiftGears.start(); //continually check to see if gears need to be shifted.
+
+     shiftGears.start(); //continually check to see if gears need to be shifted.
     // May need to go in Teleop Periodic.
 
     // startPosition = RobotMap.liftMotor.getSelectedSensorPosition();

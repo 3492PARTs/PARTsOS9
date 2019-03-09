@@ -27,23 +27,30 @@ public class GearShift extends Command {
   @Override
   protected void initialize() {
   }
+  
+  private long stTime = 0; 
+  private boolean hold = true;
 
   @Override
   protected void execute() {
-      if (Math.abs(RobotMap.encoder0.getVelocity()) >= 1500){
-            twoSecTimer.start();
-          if(twoSecTimer.isFinished()){
-            RobotMap.solenoidStan.set(DoubleSolenoid.Value.kForward);
-            highGear = true;
-            SmartDashboard.putBoolean("Gear shifted to high ", highGear);
-            }
-        
+    if (Math.abs(RobotMap.encoder0.getVelocity()) >= 3200){
+      if (hold){
+        stTime = System.currentTimeMillis();
+        hold = false;
       }
-      else if (Math.abs(m_oi.driveStick.getRawAxis(1)) < 0.01){
-          RobotMap.solenoidStan.set(DoubleSolenoid.Value.kReverse);
-          highGear = false;
-          SmartDashboard.putBoolean("Gear shifted to high ", highGear);
+      if (System.currentTimeMillis() >= stTime + 2000){
+        RobotMap.solenoidStan.set(DoubleSolenoid.Value.kForward);
+        highGear = true;
+        SmartDashboard.putBoolean("Gear shifted to high ", highGear);
       }
+    }
+    else if (Math.abs(m_oi.driveStick.getRawAxis(1)) < 0.01){
+      RobotMap.solenoidStan.set(DoubleSolenoid.Value.kReverse);
+      highGear = false;
+      SmartDashboard.putBoolean("Gear shifted to high ", highGear);
+      hold = true;
+    }
+    else if (Math.abs(RobotMap.encoder0.getVelocity()) < 3200) hold = true;
   }
 
   @Override
