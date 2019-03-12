@@ -107,7 +107,7 @@ public class Robot extends TimedRobot {
      * m_chooser.addOption+("DoNothingAuto", new AutoDoNothingCmdGrp());
      */
     RobotMap.c.setClosedLoopControl(true);
-    RobotMap.solenoidStan.set(DoubleSolenoid.Value.kReverse); // TODO: check if forward is low gear
+    //RobotMap.solenoidStan.set(DoubleSolenoid.Value.kReverse); // low
    
     m_oi.high.whenPressed(new Lift(LiftLevel.High));
     m_oi.middle.whenPressed(new Lift(LiftLevel.Middle));
@@ -421,18 +421,14 @@ public class Robot extends TimedRobot {
      * 
      * } else{ RobotMap.solenoidSteve.set(false); }
      */
-      if(m_oi.driveStick.getRawButton(1)){
-        if(shiftToggle){
+    if(m_oi.driveStick.getRawButton(1)){
           RobotMap.solenoidStan.set(DoubleSolenoid.Value.kForward);
-          shiftToggle = false;
-          
-        }
-        else if(!shiftToggle){
-        RobotMap.solenoidStan.set(DoubleSolenoid.Value.kReverse);
-        shiftToggle = true;
-        }
-      }
-      SmartDashboard.putBoolean("Gear Shifted to Low", shiftToggle);
+    
+    }
+    if(m_oi.driveStick.getRawButton(2)){
+      RobotMap.solenoidStan.set(DoubleSolenoid.Value.kReverse);
+    }
+    
 
     if (m_oi.driveStick.getRawAxis(3) > 0.8) { // HATCH LATCH - RT
       RobotMap.solenoidSteve.set(true);
@@ -458,13 +454,13 @@ public class Robot extends TimedRobot {
       // RobotMap.armMotor.getSelectedSensorPosition());
     }
 
-    if (m_oi.driveStick.getRawButton(3)) { // MANUAL OUT - B
+    if (m_oi.driveStick.getRawButton(3)) { // MANUAL in - B
       RobotMap.armMotor.set(ControlMode.PercentOutput, -1);
     }
 
-    if (m_oi.driveStick.getRawButton(2)) { // MANUAL IN - X
-      RobotMap.armMotor.set(ControlMode.PercentOutput, .8);
-    }
+   // if (m_oi.driveStick.getRawButton(2)) { // MANUAL out - X
+    //  RobotMap.armMotor.set(ControlMode.PercentOutput, .8);
+    //}
 
     if (m_oi.driveStick.getRawButton(5) && !(m_oi.launchPad.getRawButton(7))) { // IN - LB
       RobotMap.intake.set(ControlMode.PercentOutput, 0.5);
