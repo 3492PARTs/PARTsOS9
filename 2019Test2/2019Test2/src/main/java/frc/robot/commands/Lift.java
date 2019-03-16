@@ -18,7 +18,7 @@ import frc.robot.RobotMap;
 public class Lift extends Command {
 
   private LiftLevel liftLevel;
-  private double distance, startPosition;
+  private double distance, startPosition, distanceToTravel;
   private  boolean up = false, down = false;
 
   public Lift(LiftLevel liftLevel, double startPosition) {
@@ -26,6 +26,7 @@ public class Lift extends Command {
     // eg. requires(chassis);
     this.liftLevel = liftLevel; 
     this.startPosition = startPosition;
+
   }
 
   // Called just before this Command runs the first time
@@ -55,16 +56,34 @@ public class Lift extends Command {
     else{
       down = true; // down
     }
+
+    distanceToTravel = distance - (RobotMap.liftMotor.getSelectedSensorPosition() - startPosition);
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
     if ((RobotMap.liftMotor.getSelectedSensorPosition() - startPosition) > distance){
-      RobotMap.liftMotor.set(ControlMode.PercentOutput, -1);
+      if (((RobotMap.liftMotor.getSelectedSensorPosition() - startPosition) >= (distanceToTravel*.75))
+          ||
+          ((RobotMap.liftMotor.getSelectedSensorPosition() - startPosition) <= (distanceToTravel*.25))){
+        RobotMap.liftMotor.set(ControlMode.PercentOutput, -.3);
+      }
+      else{
+        RobotMap.liftMotor.set(ControlMode.PercentOutput, -1);
+      }
     }
     else{
-      RobotMap.liftMotor.set(ControlMode.PercentOutput, 1);
+      if (((RobotMap.liftMotor.getSelectedSensorPosition() - startPosition) >= (distanceToTravel*.75))
+          ||
+          ((RobotMap.liftMotor.getSelectedSensorPosition() - startPosition) <= (distanceToTravel*.25))){
+        RobotMap.liftMotor.set(ControlMode.PercentOutput, .3);
+      }
+      else{
+        RobotMap.liftMotor.set(ControlMode.PercentOutput, 1);
+    
+      }
+
     }
     
   }

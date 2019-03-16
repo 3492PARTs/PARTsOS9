@@ -108,10 +108,13 @@ public class Robot extends TimedRobot {
      */
     RobotMap.c.setClosedLoopControl(true);
     //RobotMap.solenoidStan.set(DoubleSolenoid.Value.kReverse); // low
+    //Bind the buttons to these processes.
     m_oi.high.whenPressed(new Lift(LiftLevel.High, startPosition));
     m_oi.middle.whenPressed(new Lift(LiftLevel.Middle, startPosition));
     m_oi.low.whenPressed(new Lift(LiftLevel.Low, startPosition));
     m_oi.cancelLift.cancelWhenPressed(new Lift(LiftLevel.Low, startPosition));
+
+    System.out.println("Robot inti start pos: " + startPosition);
   }
 
   @Override
