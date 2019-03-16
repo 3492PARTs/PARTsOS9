@@ -108,11 +108,10 @@ public class Robot extends TimedRobot {
      */
     RobotMap.c.setClosedLoopControl(true);
     //RobotMap.solenoidStan.set(DoubleSolenoid.Value.kReverse); // low
-   
-    m_oi.high.whenPressed(new Lift(LiftLevel.High));
-    m_oi.middle.whenPressed(new Lift(LiftLevel.Middle));
-    m_oi.low.whenPressed(new Lift(LiftLevel.Low));
-    m_oi.cancelLift.cancelWhenPressed(new Lift(LiftLevel.Low));
+    m_oi.high.whenPressed(new Lift(LiftLevel.High, startPosition));
+    m_oi.middle.whenPressed(new Lift(LiftLevel.Middle, startPosition));
+    m_oi.low.whenPressed(new Lift(LiftLevel.Low, startPosition));
+    m_oi.cancelLift.cancelWhenPressed(new Lift(LiftLevel.Low, startPosition));
   }
 
   @Override
@@ -483,7 +482,8 @@ public class Robot extends TimedRobot {
     /*if (m_oi.launchPad.getRawButton(8)) {
       if ((RobotMap.liftMotor.getSelectedSensorPosition() - startPosition) < -34206) {
         RobotMap.liftMotor.set(ControlMode.PercentOutput, 1); // down
-      } else if (RobotMap.liftMotor.getSelectedSensorPosition() - startPosition > -34206) {
+      } 
+      else if (RobotMap.liftMotor.getSelectedSensorPosition() - startPosition > -34206) {
         RobotMap.liftMotor.set(ControlMode.PercentOutput, -1); // up
       } else
         RobotMap.liftMotor.set(ControlMode.PercentOutput, 0);

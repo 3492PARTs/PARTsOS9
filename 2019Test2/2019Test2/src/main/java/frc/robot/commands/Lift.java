@@ -18,13 +18,14 @@ import frc.robot.RobotMap;
 public class Lift extends Command {
 
   private LiftLevel liftLevel;
-  private double distance;
+  private double distance, startPosition;
   private  boolean up = false, down = false;
 
-  public Lift(LiftLevel liftLevel) {
+  public Lift(LiftLevel liftLevel, double startPosition) {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
     this.liftLevel = liftLevel; 
+    this.startPosition = startPosition;
   }
 
   // Called just before this Command runs the first time
@@ -32,7 +33,7 @@ public class Lift extends Command {
   protected void initialize() {
     switch(liftLevel){
       case Low: 
-        distance = -600;//startPosition- need to make command for it
+        distance = -1500;//startPosition- need to make command for it
       break;
 
       case Middle:
@@ -44,11 +45,11 @@ public class Lift extends Command {
       break;
 
       default:
-      distance = -600;
+      distance = -1500;
       break;
     }
 
-    if (RobotMap.liftMotor.getSelectedSensorPosition() > distance){
+    if ((RobotMap.liftMotor.getSelectedSensorPosition() - startPosition) > distance){
       up = true; // up
     }
     else{
@@ -59,7 +60,7 @@ public class Lift extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    if (RobotMap.liftMotor.getSelectedSensorPosition() > distance){
+    if ((RobotMap.liftMotor.getSelectedSensorPosition() - startPosition) > distance){
       RobotMap.liftMotor.set(ControlMode.PercentOutput, -1);
     }
     else{
@@ -72,8 +73,8 @@ public class Lift extends Command {
   @Override
   protected boolean isFinished() {
     System.out.println("running lift: going to " + distance + " currently at: " + RobotMap.liftMotor.getSelectedSensorPosition());
-    if(up && RobotMap.liftMotor.getSelectedSensorPosition() < distance) return true;
-    if (down && RobotMap.liftMotor.getSelectedSensorPosition() > distance) return true;
+    if(up && (RobotMap.liftMotor.getSelectedSensorPosition() -startPosition) < distance) return true;
+    if (down && (RobotMap.liftMotor.getSelectedSensorPosition() - startPosition) > distance) return true;
     return false;
     //change the 0.5
   }
