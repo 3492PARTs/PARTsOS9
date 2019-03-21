@@ -72,8 +72,6 @@ public class Robot extends TimedRobot {
   boolean firstPress8 = true;
   double startPosition;
   double startPositionArm;
-
-  GearShift shiftGears = new GearShift();
   // ------------------------------PATHFINDER CODE------------------------------------------------------------------------------------------------
   /*
    * private void followPath(){ if (leftFollower.isFinished()
@@ -112,9 +110,9 @@ public class Robot extends TimedRobot {
     m_oi.high.whenPressed(new Lift(LiftLevel.High, startPosition));
     m_oi.middle.whenPressed(new Lift(LiftLevel.Middle, startPosition));
     m_oi.low.whenPressed(new Lift(LiftLevel.Low, startPosition));
-    m_oi.cancelLift.cancelWhenPressed(new Lift(LiftLevel.Low, startPosition));
+    //m_oi.cancelLift.cancelWhenPressed(new Lift(LiftLevel.Low, startPosition));
 
-    System.out.println("Robot inti start pos: " + startPosition);
+    System.out.println("Robot intitial start pos: " + startPosition);
   }
 
   @Override
@@ -182,155 +180,6 @@ public class Robot extends TimedRobot {
     Scheduler.getInstance().run();
     SmartDashboard.putNumber("DriveDistanceAuto", encoder.getEncoder0Distance());
 
-    Scheduler.getInstance().run();
-    double x = limeLight.getX();
-    double y = limeLight.getY();
-    double area = limeLight.getArea();
-    double v = limeLight.getV();
-    SmartDashboard.putNumber("LimelightX", x);
-    SmartDashboard.putNumber("LimelightY", y);
-    SmartDashboard.putNumber("LimelightArea", area);
-    SmartDashboard.putNumber("Target Valid", v);
-    SmartDashboard.putNumber("Drive Distance Teleop", encoder.getEncoder0Distance());
-    SmartDashboard.putNumber("Lift Encoder Distance", RobotMap.liftMotor.getSelectedSensorPosition());
-    SmartDashboard.putNumber("Arm Encoder Distance", RobotMap.armMotor.getSelectedSensorPosition());
-    SmartDashboard.putNumber("RPMs ", RobotMap.encoder0.getVelocity());
-
-    RobotMap.dDrive.arcadeDrive(-m_oi.driveStick.getRawAxis(1) * .8, m_oi.driveStick.getRawAxis(4) * 0.75);
-
-    double Kp = -0.06;
-    double min_command = -0.03;
-    double leftCommand = 0;
-    double rightCommand = 0;
-    double steering_adjust = 0;
-    double startPos;
-    double distanceAdjust = 0;
-    // ---------------------------------------VISION PROCESSING-----------------------------------------------------------------------------------------------
-
-    // AIMING AIMING AIMING AIMING
-
-    if (m_oi.driveStick.getRawButton(4)) { // Y
-      double heading_error = -x;
-      if (x > 1.0) {
-        steering_adjust = Kp * heading_error - min_command;
-      } else if (x < -1.0) {
-        steering_adjust = Kp * heading_error + min_command;
-      }
-      leftCommand += steering_adjust;
-      rightCommand -= steering_adjust;
-      RobotMap.dDrive.tankDrive(leftCommand * .75, rightCommand * .75);
-    }
-
-    /*
-     * if(m_oi.driveStick.getRawButton(1)){ RobotMap.solenoidSteve.set(true); }
-     * else{ RobotMap.solenoidSteve.set(false); }
-     */
-
-    if (m_oi.driveStick.getRawAxis(3) > 0.8) { // HATCH - RT
-      RobotMap.solenoidSteve.set(true);
-    } else {
-      RobotMap.solenoidSteve.set(false);
-    }
-
-    if (m_oi.launchPad.getRawButton(11)) { // ARM IN
-      if (RobotMap.armMotor.getSelectedSensorPosition() > (startPositionArm + 200)) {
-        RobotMap.armMotor.set(ControlMode.PercentOutput, .8); // stop
-      } else if (RobotMap.armMotor.getSelectedSensorPosition() < (startPositionArm + 200)) {
-        RobotMap.armMotor.set(ControlMode.PercentOutput, 0); // down
-      }
-    } else if (m_oi.launchPad.getRawButton(10)) { // ARM OUT
-      if ((RobotMap.armMotor.getSelectedSensorPosition() - startPositionArm) < (6211)) {
-        RobotMap.armMotor.set(ControlMode.PercentOutput, -.8);
-      } else if ((RobotMap.armMotor.getSelectedSensorPosition() - startPositionArm) > (6211)) {
-        RobotMap.armMotor.set(ControlMode.PercentOutput, 0);
-      }
-    } else {
-      RobotMap.armMotor.set(ControlMode.PercentOutput, 0);
-      // SmartDashboard.putNumber(("Arm Encoder Distance WHEN STOPPED"),
-      // RobotMap.armMotor.getSelectedSensorPosition());
-    }
-
-    if (m_oi.driveStick.getRawButton(3)) { // MANUAL OUT - B
-      RobotMap.armMotor.set(ControlMode.PercentOutput, -1);
-    }
-
-    if (m_oi.driveStick.getRawButton(2)) { // MANUAL IN - X
-      RobotMap.armMotor.set(ControlMode.PercentOutput, .8);
-    }
-
-    if (m_oi.driveStick.getRawButton(5) && !(m_oi.launchPad.getRawButton(7))) { // IN - LB
-      RobotMap.intake.set(ControlMode.PercentOutput, 0.5);
-    } else if (m_oi.launchPad.getRawButton(7) && !(m_oi.driveStick.getRawButton(6))) {
-      RobotMap.intake.set(ControlMode.PercentOutput, 0.1);
-    } else if (m_oi.driveStick.getRawButton(6)) { // OUT - RB
-      RobotMap.intake.set(ControlMode.PercentOutput, -1);
-    } else {
-      RobotMap.intake.set(ControlMode.PercentOutput, 0);
-    }
-
-    if (m_oi.launchPad.getRawButton(1)) { // MANUAL DOWN
-      RobotMap.liftMotor.set(ControlMode.PercentOutput, 1);
-    } else if (m_oi.launchPad.getRawButton(3)) { // MANUAL UP
-      RobotMap.liftMotor.set(ControlMode.PercentOutput, -1);
-    } else {
-      RobotMap.liftMotor.set(ControlMode.PercentOutput, 0);
-    }
-
-    /*if (m_oi.launchPad.getRawButton(8)) {
-      if ((RobotMap.liftMotor.getSelectedSensorPosition() - startPosition) < -34206) {
-        RobotMap.liftMotor.set(ControlMode.PercentOutput, 1); // down
-      } else if (RobotMap.liftMotor.getSelectedSensorPosition() - startPosition > -34206) {
-        RobotMap.liftMotor.set(ControlMode.PercentOutput, -1); // up
-      } else
-        RobotMap.liftMotor.set(ControlMode.PercentOutput, 0);
-        
-    }
-
-    if (m_oi.launchPad.getRawButton(9)) {
-      if ((RobotMap.liftMotor.getSelectedSensorPosition() - startPosition) < -70270) {
-        RobotMap.liftMotor.set(ControlMode.PercentOutput, 1); // down
-      } else if ((RobotMap.liftMotor.getSelectedSensorPosition() - startPosition) > -70270) {
-        RobotMap.liftMotor.set(ControlMode.PercentOutput, -1); // up
-      } else {
-        RobotMap.liftMotor.set(ControlMode.PercentOutput, 0);
-      }
-    }
-
-    if (m_oi.launchPad.getRawButton(5)) {
-      if (RobotMap.liftMotor.getSelectedSensorPosition() > (startPosition - 500)) {
-        RobotMap.liftMotor.set(ControlMode.PercentOutput, 0); // stop
-      } else if (RobotMap.liftMotor.getSelectedSensorPosition() < (startPosition - 500)) {
-        RobotMap.liftMotor.set(ControlMode.PercentOutput, 1); // down
-      }
-    }*/
-
-  }
-
-  @Override
-  public void teleopInit() {
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.cancel();
-    }
-    if (followerNotifier != null) {
-      followerNotifier.stop();
-    }
-
-    RobotMap.dDrive.tankDrive(0, 0);
-
-
-     //shiftGears.start(); //continually check to see if gears need to be shifted.
-    // May need to go in Teleop Periodic.
-
-    // startPosition = RobotMap.liftMotor.getSelectedSensorPosition();
-    // startPositionArm = RobotMap.armMotor.getSelectedSensorPosition();
-    // SmartDashboard.putNumber("start position arm",
-    // RobotMap.armMotor.getSelectedSensorPosition());
-  }
-
-  private boolean shiftToggle = true;
-  @Override
-  public void teleopPeriodic() {
-
     /*
      * if (RobotMap.liftEncoder.getDistance() >= 1 &&
      * RobotMap.liftEncoder.getDistance() <= 1 && armPosition == ArmPosition.home){
@@ -364,8 +213,7 @@ public class Robot extends TimedRobot {
     double steering_adjust = 0;
     double startPos;
     double distanceAdjust = 0;
-    // ---------------------------------------VISION
-    // PROCESSING-----------------------------------------------------------------------------------------------
+    // ---------------------------------------VISION PROCESSING-----------------------------------------------------------------------------------------------
 
     // AIMING AIMING AIMING AIMING
 
@@ -432,11 +280,11 @@ public class Robot extends TimedRobot {
     }
     
 
-    if (m_oi.driveStick.getRawAxis(3) > 0.8) { // HATCH LATCH - RT
+    /*if (m_oi.driveStick.getRawAxis(3) > 0.8) { // HATCH LATCH - RT
       RobotMap.solenoidSteve.set(true);
     } else {
       RobotMap.solenoidSteve.set(false);
-    }
+    }*/
 
     if (m_oi.launchPad.getRawButton(11)) { // ARM IN
       if (RobotMap.armMotor.getSelectedSensorPosition() > (startPositionArm + 200)) {
@@ -464,20 +312,248 @@ public class Robot extends TimedRobot {
     //  RobotMap.armMotor.set(ControlMode.PercentOutput, .8);
     //}
 
-    if (m_oi.driveStick.getRawButton(5) && !(m_oi.launchPad.getRawButton(7))) { // IN - LB
-      RobotMap.intake.set(ControlMode.PercentOutput, 0.5);
-    } else if (m_oi.launchPad.getRawButton(7) && !(m_oi.driveStick.getRawButton(6))) {
-      RobotMap.intake.set(ControlMode.PercentOutput, 0.1);
-    } else if (m_oi.driveStick.getRawButton(6)) { // OUT - RB
-      RobotMap.intake.set(ControlMode.PercentOutput, -1);
-    } else {
-      RobotMap.intake.set(ControlMode.PercentOutput, 0);
+    // if (m_oi.driveStick.getRawButton(5) && !(m_oi.launchPad.getRawButton(7))) { // IN - LB
+    //   RobotMap.intake.set(ControlMode.PercentOutput, 0.5);
+    // } else if (m_oi.launchPad.getRawButton(7) && !(m_oi.driveStick.getRawButton(6))) {
+    //   RobotMap.intake.set(ControlMode.PercentOutput, 0.1);
+    // } else if (m_oi.driveStick.getRawButton(6)) { // OUT - RB
+    //   RobotMap.intake.set(ControlMode.PercentOutput, -1);
+    // } else {
+    //   RobotMap.intake.set(ControlMode.PercentOutput, 0);
+    // }
+
+    if(m_oi.driveStick.getRawButton(5)){  // IN - LB
+      if(RobotMap.solenoidStan.get() == Value.kReverse){ //for ball
+        RobotMap.intakeLeft.set(1);
+        RobotMap.intakeRight.set(-1);
+      }
+      else{
+        RobotMap.intakeLeft.set(-1);   //for hatch
+        RobotMap.intakeRight.set(1);
+      }
+    }
+    else if(m_oi.driveStick.getRawButton(6)){ // OUT - RB
+      if(RobotMap.solenoidStan.get() == Value.kReverse){ //for ball
+        RobotMap.intakeLeft.set(-1);
+        RobotMap.intakeRight.set(1);
+      }
+      else{
+        RobotMap.intakeLeft.set(1);   //for hatch
+        RobotMap.intakeRight.set(-1);
+      }
     }
 
+
     if (m_oi.launchPad.getRawButton(1)) { // MANUAL DOWN
-      RobotMap.liftMotor.set(ControlMode.PercentOutput, 1);
+      RobotMap.liftMotor.set(ControlMode.PercentOutput, .3);
     } else if (m_oi.launchPad.getRawButton(3)) { // MANUAL UP
-      RobotMap.liftMotor.set(ControlMode.PercentOutput, -1);
+      RobotMap.liftMotor.set(ControlMode.PercentOutput, -.3);
+    } else {
+      RobotMap.liftMotor.set(ControlMode.PercentOutput, 0);
+    }
+
+    /*if (m_oi.launchPad.getRawButton(8)) {
+      if ((RobotMap.liftMotor.getSelectedSensorPosition() - startPosition) < -34206) {
+        RobotMap.liftMotor.set(ControlMode.PercentOutput, 1); // down
+      } 
+      else if (RobotMap.liftMotor.getSelectedSensorPosition() - startPosition > -34206) {
+        RobotMap.liftMotor.set(ControlMode.PercentOutput, -1); // up
+      } else
+        RobotMap.liftMotor.set(ControlMode.PercentOutput, 0);
+
+     // new Lift(LiftLevel.Middle).start();
+    }
+
+    if (m_oi.launchPad.getRawButton(9)) {
+      if ((RobotMap.liftMotor.getSelectedSensorPosition() - startPosition) < -70270) {
+        RobotMap.liftMotor.set(ControlMode.PercentOutput, 1); // down
+      } else if ((RobotMap.liftMotor.getSelectedSensorPosition() - startPosition) > -70270) {
+        RobotMap.liftMotor.set(ControlMode.PercentOutput, -1); // up
+      } else {
+        RobotMap.liftMotor.set(ControlMode.PercentOutput, 0);
+      }
+    }
+
+    if (m_oi.launchPad.getRawButton(5)) {
+      if (RobotMap.liftMotor.getSelectedSensorPosition() > (startPosition - 360)) {
+        RobotMap.liftMotor.set(ControlMode.PercentOutput, 0); // stop
+      } else if (RobotMap.liftMotor.getSelectedSensorPosition() < (startPosition - 360)) {
+        RobotMap.liftMotor.set(ControlMode.PercentOutput, 1); // down
+      }
+    }*/
+  }
+
+  @Override
+  public void teleopPeriodic() {
+
+    /*
+     * if (RobotMap.liftEncoder.getDistance() >= 1 &&
+     * RobotMap.liftEncoder.getDistance() <= 1 && armPosition == ArmPosition.home){
+     * new ArmPivot(ArmPosition.miss).start(); armPosition = ArmPosition.miss; }
+     * else if (RobotMap.liftEncoder.getDistance() <= 1 &&
+     * RobotMap.liftEncoder.getDistance() >= 1 && armPosition == ArmPosition.miss){
+     * new ArmPivot(ArmPosition.home).start(); armPosition = ArmPosition.home; }
+     */
+    Scheduler.getInstance().run();
+    double x = limeLight.getX();
+    double y = limeLight.getY();
+    double area = limeLight.getArea();
+    double v = limeLight.getV();
+    SmartDashboard.putNumber("LimelightX", x);
+    SmartDashboard.putNumber("LimelightY", y);
+    SmartDashboard.putNumber("LimelightArea", area);
+    SmartDashboard.putNumber("Target Valid", v);
+    SmartDashboard.putNumber("Drive Distance Teleop", encoder.getEncoder0Distance());
+    SmartDashboard.putNumber("Lift Encoder Distance", RobotMap.liftMotor.getSelectedSensorPosition());
+    SmartDashboard.putNumber("Arm Encoder Distance", RobotMap.armMotor.getSelectedSensorPosition());
+    SmartDashboard.putNumber("RPMs ", RobotMap.encoder0.getVelocity());
+
+    SmartDashboard.putNumber("OutPut current1", RobotMap.frontLeftMotor.getOutputCurrent());
+    // SmartDashboard.putNumber("OutPut current0", RobotMap.backLeftMotor;
+    RobotMap.dDrive.arcadeDrive(-m_oi.driveStick.getRawAxis(1) * .8, m_oi.driveStick.getRawAxis(4) * 0.75);
+
+    double Kp = -0.06;
+    double min_command = -0.03;
+    double leftCommand = 0;
+    double rightCommand = 0;
+    double steering_adjust = 0;
+    double startPos;
+    double distanceAdjust = 0;
+    // ---------------------------------------VISION PROCESSING-----------------------------------------------------------------------------------------------
+
+    // AIMING AIMING AIMING AIMING
+
+    if (m_oi.driveStick.getRawButton(4)) { // Y
+      double heading_error = -x;
+      if (x > 1.0) {
+        steering_adjust = Kp * heading_error - min_command;
+      } else if (x < -1.0) {
+        steering_adjust = Kp * heading_error + min_command;
+      }
+      leftCommand += steering_adjust;
+      rightCommand -= steering_adjust;
+      RobotMap.dDrive.tankDrive(leftCommand * .75, rightCommand * .75);
+    }
+    // END AIMING
+
+    /*
+     * //SEEKING SEEKING SEEKING SEEKING
+     * 
+     * double kP2 = -0.03; if(m_oi.driveStick.getRawButton(3)){ if(v==0.0){ //we
+     * don't see the target, seek for the target by spinning in place at a safe
+     * speed steering_adjust = 0.4; } else { //we do see the target, execute aiming
+     * code double heading_error = -x; if(x > 1.0){ steering_adjust = kP2 *
+     * heading_error - min_command; } else if (x < -1.0){ steering_adjust = kP2 *
+     * heading_error + min_command; } } leftCommand += steering_adjust; rightCommand
+     * -= steering_adjust; //if (m_oi.driveStick.getRawAxis(4) < 0){ //
+     * RobotMap.dDrive.arcadeDrive(-0.3,rightCommand*.75); //} //if
+     * (m_oi.driveStick.getRawAxis(4) > 0){ //
+     * RobotMap.dDrive.arcadeDrive(-0.3,leftCommand*.75); //}
+     * RobotMap.dDrive.tankDrive(leftCommand*.75,rightCommand*.75); } //END SEEKING
+     * 
+     * // DESTROY double KpAim = -0.1; double minAimCommand = 0.05; if
+     * (m_oi.driveStick.getRawButton(5)) { double headingError = -x; double
+     * distanceError = -y; double steeringAdjust = 0.0; if(x > 1.0){ steeringAdjust
+     * = KpAim * headingError - minAimCommand; } else if(x < -1.0){ steeringAdjust =
+     * KpAim*headingError+minAimCommand; } distanceAdjust = KpDistance *
+     * distanceError; leftCommand += steeringAdjust + distanceAdjust; rightCommand
+     * -= steeringAdjust + distanceAdjust; //The multiplier for the speed here does
+     * NOT make the actual speed go down by that much.
+     * RobotMap.dDrive.tankDrive((leftCommand)*.3,(-rightCommand)*.3); }
+     */ // END DESTROY
+        // -------------------------------------------------VISION
+        // PROCESSING-------------------------------------------------------------------------------------------
+
+    /*
+     * if(m_oi.driveStick.getRawButton(1)){
+     * RobotMap.solenoidSteve.set(DoubleSolenoid.Value.kForward); }
+     * 
+     * if(m_oi.driveStick.getRawButton(2)){
+     * RobotMap.solenoidSteve.set(DoubleSolenoid.Value.kReverse); }
+     */
+    /*
+     * if(m_oi.driveStick.getRawButton(1)){ //intake hatch - A
+     * RobotMap.solenoidSteve.set(true);
+     * 
+     * } else{ RobotMap.solenoidSteve.set(false); }
+     */
+    if(m_oi.driveStick.getRawButton(1)){
+          RobotMap.solenoidStan.set(DoubleSolenoid.Value.kForward);
+    
+    }
+    if(m_oi.driveStick.getRawButton(2)){
+      RobotMap.solenoidStan.set(DoubleSolenoid.Value.kReverse);
+    }
+    
+
+    /*if (m_oi.driveStick.getRawAxis(3) > 0.8) { // HATCH LATCH - RT
+      RobotMap.solenoidSteve.set(true);
+    } else {
+      RobotMap.solenoidSteve.set(false);
+    }*/
+
+    if (m_oi.launchPad.getRawButton(11)) { // ARM IN
+      if (RobotMap.armMotor.getSelectedSensorPosition() > (startPositionArm + 200)) {
+        RobotMap.armMotor.set(ControlMode.PercentOutput, .8); // stop
+      } else if (RobotMap.armMotor.getSelectedSensorPosition() < (startPositionArm + 200)) {
+        RobotMap.armMotor.set(ControlMode.PercentOutput, 0); // down
+      }
+    } else if (m_oi.launchPad.getRawButton(10)) { // ARM OUT
+      if ((RobotMap.armMotor.getSelectedSensorPosition() - startPositionArm) < (6211)) {
+        RobotMap.armMotor.set(ControlMode.PercentOutput, -.8);
+      } else if ((RobotMap.armMotor.getSelectedSensorPosition() - startPositionArm) > (6211)) {
+        RobotMap.armMotor.set(ControlMode.PercentOutput, 0);
+      }
+    } else {
+      RobotMap.armMotor.set(ControlMode.PercentOutput, 0);
+      // SmartDashboard.putNumber(("Arm Encoder Distance WHEN STOPPED"),
+      // RobotMap.armMotor.getSelectedSensorPosition());
+    }
+
+    if (m_oi.driveStick.getRawButton(3)) { // MANUAL in - B
+      RobotMap.armMotor.set(ControlMode.PercentOutput, -1);
+    }
+
+   // if (m_oi.driveStick.getRawButton(2)) { // MANUAL out - X
+    //  RobotMap.armMotor.set(ControlMode.PercentOutput, .8);
+    //}
+
+    // if (m_oi.driveStick.getRawButton(5) && !(m_oi.launchPad.getRawButton(7))) { // IN - LB
+    //   RobotMap.intake.set(ControlMode.PercentOutput, 0.5);
+    // } else if (m_oi.launchPad.getRawButton(7) && !(m_oi.driveStick.getRawButton(6))) {
+    //   RobotMap.intake.set(ControlMode.PercentOutput, 0.1);
+    // } else if (m_oi.driveStick.getRawButton(6)) { // OUT - RB
+    //   RobotMap.intake.set(ControlMode.PercentOutput, -1);
+    // } else {
+    //   RobotMap.intake.set(ControlMode.PercentOutput, 0);
+    // }
+
+    if(m_oi.driveStick.getRawButton(5)){  // IN - LB
+      if(RobotMap.solenoidStan.get() == Value.kReverse){ //for ball
+        RobotMap.intakeLeft.set(1);
+        RobotMap.intakeRight.set(-1);
+      }
+      else{
+        RobotMap.intakeLeft.set(-1);   //for hatch
+        RobotMap.intakeRight.set(1);
+      }
+    }
+    else if(m_oi.driveStick.getRawButton(6)){ // OUT - RB
+      if(RobotMap.solenoidStan.get() == Value.kReverse){ //for ball
+        RobotMap.intakeLeft.set(-1);
+        RobotMap.intakeRight.set(1);
+      }
+      else{
+        RobotMap.intakeLeft.set(1);   //for hatch
+        RobotMap.intakeRight.set(-1);
+      }
+    }
+
+
+    if (m_oi.launchPad.getRawButton(1)) { // MANUAL DOWN
+      RobotMap.liftMotor.set(ControlMode.PercentOutput, .3);
+    } else if (m_oi.launchPad.getRawButton(3)) { // MANUAL UP
+      RobotMap.liftMotor.set(ControlMode.PercentOutput, -.3);
     } else {
       RobotMap.liftMotor.set(ControlMode.PercentOutput, 0);
     }

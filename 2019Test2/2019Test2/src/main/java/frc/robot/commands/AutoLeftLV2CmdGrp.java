@@ -22,11 +22,11 @@ public class AutoLeftLV2CmdGrp extends CommandGroup {
     addSequential(new AutoDriveStraight(10,-1));
     addSequential(new AutoTurn(-1, 5));
     addSequential(new AutoSeekAimDestroy(-1, 5));
-    addSequential(new Lift(LiftLevel.Middle));
+    //addSequential(new Lift(LiftLevel.Middle));
     addSequential(new AutoDriveStraight(10, 1));
     addSequential(new AutoDeployHatch());
     addSequential(new AutoDriveStraight(10, -1));
-    addSequential(new Lift(LiftLevel.Low));
+   // addSequential(new Lift(LiftLevel.Low));
     addSequential(new AutoTurn(1, 5));
   }
 }

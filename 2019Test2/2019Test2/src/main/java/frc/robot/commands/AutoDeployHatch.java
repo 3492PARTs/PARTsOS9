@@ -23,7 +23,7 @@ private long exeTime;
 
   @Override
   protected void execute() {
-    RobotMap.solenoidSteve.set(true);
+    //RobotMap.solenoidSteve.set(true);
   }
 
   @Override
@@ -34,7 +34,7 @@ private long exeTime;
   @Override
   protected void end() {    
     System.out.println("hatch deployed");
-    RobotMap.solenoidSteve.set(true);
+    //RobotMap.solenoidSteve.set(true);
   }
 
   @Override

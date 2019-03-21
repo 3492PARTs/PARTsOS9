@@ -24,7 +24,7 @@ public class OI {
   public JoystickButton high = new JoystickButton(launchPad, 9);
   public JoystickButton middle = new JoystickButton(launchPad, 8);
   public JoystickButton low = new JoystickButton(launchPad, 5);
-  public JoystickButton cancelLift = new JoystickButton(launchPad, 6);
+  //public JoystickButton cancelLift = new JoystickButton(launchPad, 6);
 
   public Joystick getdriveStick(){
     return driveStick;

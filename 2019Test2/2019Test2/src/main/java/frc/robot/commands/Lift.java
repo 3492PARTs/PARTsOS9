@@ -10,7 +10,7 @@ package frc.robot.commands;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
 import edu.wpi.first.wpilibj.command.Command;
-import frc.robot.RobotMap;
+import frc.robot.*;
 
 
 
@@ -18,10 +18,11 @@ import frc.robot.RobotMap;
 public class Lift extends Command {
 
   private LiftLevel liftLevel;
-  private double distance, startPosition, distanceToTravel;
+  private double distance, startPosition, distanceToTravel, posAtButtonPress;
   private  boolean up = false, down = false;
+  private OI m_oi = new OI();
 
-  public Lift(LiftLevel liftLevel, double startPosition) {
+  public Lift(LiftLevel liftLevel ,double startPosition) {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
     this.liftLevel = liftLevel; 
@@ -57,30 +58,36 @@ public class Lift extends Command {
       down = true; // down
     }
 
-    distanceToTravel = distance - (RobotMap.liftMotor.getSelectedSensorPosition() - startPosition);
+    posAtButtonPress = (RobotMap.liftMotor.getSelectedSensorPosition() - startPosition);
+    distanceToTravel = Math.abs(distance - (RobotMap.liftMotor.getSelectedSensorPosition() - startPosition));
+
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
     if ((RobotMap.liftMotor.getSelectedSensorPosition() - startPosition) > distance){
-      if (((RobotMap.liftMotor.getSelectedSensorPosition() - startPosition) >= (distanceToTravel*.75))
+      if ((Math.abs(RobotMap.liftMotor.getSelectedSensorPosition() - posAtButtonPress) >= (distanceToTravel*.75))
           ||
-          ((RobotMap.liftMotor.getSelectedSensorPosition() - startPosition) <= (distanceToTravel*.25))){
+          (Math.abs(RobotMap.liftMotor.getSelectedSensorPosition() - posAtButtonPress) <= (distanceToTravel*.25))
+          ||
+          (distanceToTravel <= 10000)){
         RobotMap.liftMotor.set(ControlMode.PercentOutput, -.3);
       }
       else{
-        RobotMap.liftMotor.set(ControlMode.PercentOutput, -1);
+        RobotMap.liftMotor.set(ControlMode.PercentOutput, -.7); // test with -.7, if works, put back as -1
       }
     }
     else{
-      if (((RobotMap.liftMotor.getSelectedSensorPosition() - startPosition) >= (distanceToTravel*.75))
+      if ((Math.abs(RobotMap.liftMotor.getSelectedSensorPosition() - posAtButtonPress) >= (distanceToTravel*.75))
           ||
-          ((RobotMap.liftMotor.getSelectedSensorPosition() - startPosition) <= (distanceToTravel*.25))){
+          (Math.abs(RobotMap.liftMotor.getSelectedSensorPosition() - posAtButtonPress) <= (distanceToTravel*.25))
+          ||
+          (distanceToTravel <= 10000)){
         RobotMap.liftMotor.set(ControlMode.PercentOutput, .3);
       }
       else{
-        RobotMap.liftMotor.set(ControlMode.PercentOutput, 1);
+        RobotMap.liftMotor.set(ControlMode.PercentOutput, .7);  // test with .7, if works, put back as 1
     
       }
 
@@ -94,6 +101,7 @@ public class Lift extends Command {
     System.out.println("running lift: going to " + distance + " currently at: " + RobotMap.liftMotor.getSelectedSensorPosition());
     if(up && (RobotMap.liftMotor.getSelectedSensorPosition() -startPosition) < distance) return true;
     if (down && (RobotMap.liftMotor.getSelectedSensorPosition() - startPosition) > distance) return true;
+    if(m_oi.launchPad.getRawButton(6)) return true;
     return false;
     //change the 0.5
   }
