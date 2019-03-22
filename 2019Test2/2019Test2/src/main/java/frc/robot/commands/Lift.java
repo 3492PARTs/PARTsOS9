@@ -11,6 +11,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.*;
+import frc.robot.subsystems.LiftRunning;
 
 
 
@@ -21,6 +22,7 @@ public class Lift extends Command {
   private double distance, startPosition, distanceToTravel, posAtButtonPress;
   private  boolean up = false, down = false;
   private OI m_oi = new OI();
+  private LiftRunning liftRunning = new LiftRunning();
 
   public Lift(LiftLevel liftLevel ,double startPosition) {
     // Use requires() here to declare subsystem dependencies
@@ -35,19 +37,19 @@ public class Lift extends Command {
   protected void initialize() {
     switch(liftLevel){
       case Low: 
-        distance = -1500;//startPosition- need to make command for it
+        distance = 0;//startPosition- need to make command for it
       break;
 
       case Middle:
-        distance = -35406; //TODO: change values
+        distance = -34220; //TODO: change values
       break;
 
       case High:
-        distance = -71470;
+        distance = -65611;
       break;
 
       default:
-      distance = -1500;
+      distance = 0;
       break;
     }
 
@@ -61,33 +63,46 @@ public class Lift extends Command {
     posAtButtonPress = (RobotMap.liftMotor.getSelectedSensorPosition() - startPosition);
     distanceToTravel = Math.abs(distance - (RobotMap.liftMotor.getSelectedSensorPosition() - startPosition));
 
+    liftRunning.setRunning(true);
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
     if ((RobotMap.liftMotor.getSelectedSensorPosition() - startPosition) > distance){
-      if ((Math.abs(RobotMap.liftMotor.getSelectedSensorPosition() - posAtButtonPress) >= (distanceToTravel*.75))
+      //------------------------------------------------------------------------------------------------------------------------
+      if ((Math.abs(RobotMap.liftMotor.getSelectedSensorPosition() - posAtButtonPress) >= (distanceToTravel*.85))
           ||
-          (Math.abs(RobotMap.liftMotor.getSelectedSensorPosition() - posAtButtonPress) <= (distanceToTravel*.25))
+          (Math.abs(RobotMap.liftMotor.getSelectedSensorPosition() - posAtButtonPress) <= (distanceToTravel*.15))
           ||
           (distanceToTravel <= 10000)){
         RobotMap.liftMotor.set(ControlMode.PercentOutput, -.3);
       }
+      else if ((Math.abs(RobotMap.liftMotor.getSelectedSensorPosition() - posAtButtonPress) >= (distanceToTravel*.7))
+      ||
+      (Math.abs(RobotMap.liftMotor.getSelectedSensorPosition() - posAtButtonPress) <= (distanceToTravel*.3))){
+        RobotMap.liftMotor.set(ControlMode.PercentOutput, -.6);
+      }
       else{
-        RobotMap.liftMotor.set(ControlMode.PercentOutput, -.7); // test with -.7, if works, put back as -1
+        RobotMap.liftMotor.set(ControlMode.PercentOutput, -1); // test with -.7, if works, put back as -1
       }
     }
     else{
-      if ((Math.abs(RobotMap.liftMotor.getSelectedSensorPosition() - posAtButtonPress) >= (distanceToTravel*.75))
+      //------------------------------------------------------------------------------------------------------------------------
+      if ((Math.abs(RobotMap.liftMotor.getSelectedSensorPosition() - posAtButtonPress) >= (distanceToTravel*.85))
           ||
-          (Math.abs(RobotMap.liftMotor.getSelectedSensorPosition() - posAtButtonPress) <= (distanceToTravel*.25))
+          (Math.abs(RobotMap.liftMotor.getSelectedSensorPosition() - posAtButtonPress) <= (distanceToTravel*.15))
           ||
           (distanceToTravel <= 10000)){
         RobotMap.liftMotor.set(ControlMode.PercentOutput, .3);
       }
+      else if ((Math.abs(RobotMap.liftMotor.getSelectedSensorPosition() - posAtButtonPress) >= (distanceToTravel*.7))
+      ||
+      (Math.abs(RobotMap.liftMotor.getSelectedSensorPosition() - posAtButtonPress) <= (distanceToTravel*.3))){
+        RobotMap.liftMotor.set(ControlMode.PercentOutput, .6);
+      }
       else{
-        RobotMap.liftMotor.set(ControlMode.PercentOutput, .7);  // test with .7, if works, put back as 1
+        RobotMap.liftMotor.set(ControlMode.PercentOutput, 1);  // test with .7, if works, put back as 1
     
       }
 
@@ -110,6 +125,8 @@ public class Lift extends Command {
   @Override
   protected void end() {
     System.out.println("end lift");
+    RobotMap.liftMotor.set(ControlMode.PercentOutput, 0);
+    liftRunning.setRunning(false);
   }
 
   // Called when another command which requires one or more of the same

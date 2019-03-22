@@ -34,6 +34,7 @@ import frc.robot.commands.Lift;
 import frc.robot.commands.LiftLevel;
 import frc.robot.subsystems.Encoders;
 import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.subsystems.LiftRunning;
 import frc.robot.subsystems.LimeLight;
 import jaci.pathfinder.Pathfinder;
 import jaci.pathfinder.PathfinderFRC;
@@ -72,6 +73,8 @@ public class Robot extends TimedRobot {
   boolean firstPress8 = true;
   double startPosition;
   double startPositionArm;
+
+  private LiftRunning liftRunning = new LiftRunning();
   // ------------------------------PATHFINDER CODE------------------------------------------------------------------------------------------------
   /*
    * private void followPath(){ if (leftFollower.isFinished()
@@ -92,7 +95,8 @@ public class Robot extends TimedRobot {
     CameraServer.getInstance().startAutomaticCapture();
     startPosition = RobotMap.liftMotor.getSelectedSensorPosition();
     startPositionArm = RobotMap.armMotor.getSelectedSensorPosition();
-    SmartDashboard.putNumber("start position arm", RobotMap.armMotor.getSelectedSensorPosition());
+    SmartDashboard.putNumber("start position arm", RobotMap.armMotor.getSelectedSensorPosition() - startPositionArm);
+    SmartDashboard.putNumber("start position lift", RobotMap.liftMotor.getSelectedSensorPosition() - startPosition);
     gyro = new AnalogGyro(kGyroPort);
     RobotMap.liftMotor2.set(ControlMode.Follower, 15);
     m_oi = new OI();
@@ -105,7 +109,8 @@ public class Robot extends TimedRobot {
      * m_chooser.addOption+("DoNothingAuto", new AutoDoNothingCmdGrp());
      */
     RobotMap.c.setClosedLoopControl(true);
-    //RobotMap.solenoidStan.set(DoubleSolenoid.Value.kReverse); // low
+    RobotMap.solenoidSarah.set(DoubleSolenoid.Value.kForward); // low
+    RobotMap.solenoidStan.set(DoubleSolenoid.Value.kForward); //opem
     //Bind the buttons to these processes.
     m_oi.high.whenPressed(new Lift(LiftLevel.High, startPosition));
     m_oi.middle.whenPressed(new Lift(LiftLevel.Middle, startPosition));
@@ -198,8 +203,8 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("LimelightArea", area);
     SmartDashboard.putNumber("Target Valid", v);
     SmartDashboard.putNumber("Drive Distance Teleop", encoder.getEncoder0Distance());
-    SmartDashboard.putNumber("Lift Encoder Distance", RobotMap.liftMotor.getSelectedSensorPosition());
-    SmartDashboard.putNumber("Arm Encoder Distance", RobotMap.armMotor.getSelectedSensorPosition());
+    SmartDashboard.putNumber("Lift Encoder Distance", RobotMap.liftMotor.getSelectedSensorPosition() - startPosition);
+    SmartDashboard.putNumber("Arm Encoder Distance", RobotMap.armMotor.getSelectedSensorPosition() - startPositionArm);
     SmartDashboard.putNumber("RPMs ", RobotMap.encoder0.getVelocity());
 
     SmartDashboard.putNumber("OutPut current1", RobotMap.frontLeftMotor.getOutputCurrent());
@@ -213,6 +218,7 @@ public class Robot extends TimedRobot {
     double steering_adjust = 0;
     double startPos;
     double distanceAdjust = 0;
+
     // ---------------------------------------VISION PROCESSING-----------------------------------------------------------------------------------------------
 
     // AIMING AIMING AIMING AIMING
@@ -255,8 +261,7 @@ public class Robot extends TimedRobot {
      * NOT make the actual speed go down by that much.
      * RobotMap.dDrive.tankDrive((leftCommand)*.3,(-rightCommand)*.3); }
      */ // END DESTROY
-        // -------------------------------------------------VISION
-        // PROCESSING-------------------------------------------------------------------------------------------
+        // -------------------------------------------------VISION PROCESSING-------------------------------------------------------------------------------------------
 
     /*
      * if(m_oi.driveStick.getRawButton(1)){
@@ -271,13 +276,13 @@ public class Robot extends TimedRobot {
      * 
      * } else{ RobotMap.solenoidSteve.set(false); }
      */
-    if(m_oi.driveStick.getRawButton(1)){
-          RobotMap.solenoidStan.set(DoubleSolenoid.Value.kForward);
+    // if(m_oi.driveStick.getRawButton(1)){
+    //       RobotMap.solenoidStan.set(DoubleSolenoid.Value.kForward);
     
-    }
-    if(m_oi.driveStick.getRawButton(2)){
-      RobotMap.solenoidStan.set(DoubleSolenoid.Value.kReverse);
-    }
+    // }
+    // if(m_oi.driveStick.getRawButton(2)){
+    //   RobotMap.solenoidStan.set(DoubleSolenoid.Value.kReverse);
+    // }
     
 
     /*if (m_oi.driveStick.getRawAxis(3) > 0.8) { // HATCH LATCH - RT
@@ -287,17 +292,19 @@ public class Robot extends TimedRobot {
     }*/
 
     if (m_oi.launchPad.getRawButton(11)) { // ARM IN
-      if (RobotMap.armMotor.getSelectedSensorPosition() > (startPositionArm + 200)) {
+      RobotMap.armMotor.set(ControlMode.PercentOutput, .3);
+      /*if (RobotMap.armMotor.getSelectedSensorPosition() > (startPositionArm + 200)) {
         RobotMap.armMotor.set(ControlMode.PercentOutput, .8); // stop
       } else if (RobotMap.armMotor.getSelectedSensorPosition() < (startPositionArm + 200)) {
         RobotMap.armMotor.set(ControlMode.PercentOutput, 0); // down
-      }
+      }*/
     } else if (m_oi.launchPad.getRawButton(10)) { // ARM OUT
-      if ((RobotMap.armMotor.getSelectedSensorPosition() - startPositionArm) < (6211)) {
+      RobotMap.armMotor.set(ControlMode.PercentOutput, -.3);
+      /*if ((RobotMap.armMotor.getSelectedSensorPosition() - startPositionArm) < (6211)) {
         RobotMap.armMotor.set(ControlMode.PercentOutput, -.8);
       } else if ((RobotMap.armMotor.getSelectedSensorPosition() - startPositionArm) > (6211)) {
         RobotMap.armMotor.set(ControlMode.PercentOutput, 0);
-      }
+      }*/
     } else {
       RobotMap.armMotor.set(ControlMode.PercentOutput, 0);
       // SmartDashboard.putNumber(("Arm Encoder Distance WHEN STOPPED"),
@@ -322,24 +329,28 @@ public class Robot extends TimedRobot {
     //   RobotMap.intake.set(ControlMode.PercentOutput, 0);
     // }
 
-    if(m_oi.driveStick.getRawButton(5)){  // IN - LB
+    if(m_oi.driveStick.getRawButton(6)){  // out - LB
       if(RobotMap.solenoidStan.get() == Value.kReverse){ //for ball
         RobotMap.intakeLeft.set(1);
         RobotMap.intakeRight.set(-1);
+        SmartDashboard.putBoolean("Arm Solenoid fired", false);
       }
       else{
         RobotMap.intakeLeft.set(-1);   //for hatch
         RobotMap.intakeRight.set(1);
+        SmartDashboard.putBoolean("Arm Solenoid fired", true);
       }
     }
-    else if(m_oi.driveStick.getRawButton(6)){ // OUT - RB
+    else if(m_oi.driveStick.getRawButton(5)){ // in  - RB
       if(RobotMap.solenoidStan.get() == Value.kReverse){ //for ball
         RobotMap.intakeLeft.set(-1);
         RobotMap.intakeRight.set(1);
+        SmartDashboard.putBoolean("Arm Solenoid fired", false);
       }
       else{
         RobotMap.intakeLeft.set(1);   //for hatch
         RobotMap.intakeRight.set(-1);
+        SmartDashboard.putBoolean("Arm Solenoid fired", true);
       }
     }
 
@@ -404,8 +415,8 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("LimelightArea", area);
     SmartDashboard.putNumber("Target Valid", v);
     SmartDashboard.putNumber("Drive Distance Teleop", encoder.getEncoder0Distance());
-    SmartDashboard.putNumber("Lift Encoder Distance", RobotMap.liftMotor.getSelectedSensorPosition());
-    SmartDashboard.putNumber("Arm Encoder Distance", RobotMap.armMotor.getSelectedSensorPosition());
+    SmartDashboard.putNumber("Lift Encoder Distance", RobotMap.liftMotor.getSelectedSensorPosition() - startPosition);
+    SmartDashboard.putNumber("Arm Encoder Distance", RobotMap.armMotor.getSelectedSensorPosition() - startPositionArm);
     SmartDashboard.putNumber("RPMs ", RobotMap.encoder0.getVelocity());
 
     SmartDashboard.putNumber("OutPut current1", RobotMap.frontLeftMotor.getOutputCurrent());
@@ -423,7 +434,7 @@ public class Robot extends TimedRobot {
 
     // AIMING AIMING AIMING AIMING
 
-    if (m_oi.driveStick.getRawButton(4)) { // Y
+    if (false) { // Y
       double heading_error = -x;
       if (x > 1.0) {
         steering_adjust = Kp * heading_error - min_command;
@@ -477,13 +488,13 @@ public class Robot extends TimedRobot {
      * 
      * } else{ RobotMap.solenoidSteve.set(false); }
      */
-    if(m_oi.driveStick.getRawButton(1)){
-          RobotMap.solenoidStan.set(DoubleSolenoid.Value.kForward);
+    // if(m_oi.driveStick.getRawButton(1)){
+    //       RobotMap.solenoidStan.set(DoubleSolenoid.Value.kForward);
     
-    }
-    if(m_oi.driveStick.getRawButton(2)){
-      RobotMap.solenoidStan.set(DoubleSolenoid.Value.kReverse);
-    }
+    // }
+    // if(m_oi.driveStick.getRawButton(2)){
+    //   RobotMap.solenoidStan.set(DoubleSolenoid.Value.kReverse);
+    // }
     
 
     /*if (m_oi.driveStick.getRawAxis(3) > 0.8) { // HATCH LATCH - RT
@@ -492,26 +503,26 @@ public class Robot extends TimedRobot {
       RobotMap.solenoidSteve.set(false);
     }*/
 
-    if (m_oi.launchPad.getRawButton(11)) { // ARM IN
-      if (RobotMap.armMotor.getSelectedSensorPosition() > (startPositionArm + 200)) {
-        RobotMap.armMotor.set(ControlMode.PercentOutput, .8); // stop
-      } else if (RobotMap.armMotor.getSelectedSensorPosition() < (startPositionArm + 200)) {
-        RobotMap.armMotor.set(ControlMode.PercentOutput, 0); // down
+    if(m_oi.driveStick.getRawButton(3)){
+       RobotMap.solenoidStan.set(DoubleSolenoid.Value.kReverse);
+       }
+    else if(m_oi.driveStick.getRawButton(4)){
+      RobotMap.solenoidStan.set(DoubleSolenoid.Value.kForward);
       }
-    } else if (m_oi.launchPad.getRawButton(10)) { // ARM OUT
-      if ((RobotMap.armMotor.getSelectedSensorPosition() - startPositionArm) < (6211)) {
-        RobotMap.armMotor.set(ControlMode.PercentOutput, -.8);
-      } else if ((RobotMap.armMotor.getSelectedSensorPosition() - startPositionArm) > (6211)) {
-        RobotMap.armMotor.set(ControlMode.PercentOutput, 0);
-      }
-    } else {
-      RobotMap.armMotor.set(ControlMode.PercentOutput, 0);
-      // SmartDashboard.putNumber(("Arm Encoder Distance WHEN STOPPED"),
-      // RobotMap.armMotor.getSelectedSensorPosition());
-    }
 
-    if (m_oi.driveStick.getRawButton(3)) { // MANUAL in - B
-      RobotMap.armMotor.set(ControlMode.PercentOutput, -1);
+
+    if (m_oi.launchPad.getRawButton(11)) { // ARM IN
+      if (RobotMap.armMotor.getSelectedSensorPosition() - startPositionArm >= 0){
+        RobotMap.armMotor.set(ControlMode.PercentOutput, .5);
+      }
+    } 
+    else if (m_oi.launchPad.getRawButton(10)) { // ARM OUT
+      if (RobotMap.armMotor.getSelectedSensorPosition() - startPositionArm <= 21288){
+        RobotMap.armMotor.set(ControlMode.PercentOutput, -.5);
+      }
+    }
+    else {
+      RobotMap.armMotor.set(ControlMode.PercentOutput, 0);
     }
 
    // if (m_oi.driveStick.getRawButton(2)) { // MANUAL out - X
@@ -528,33 +539,50 @@ public class Robot extends TimedRobot {
     //   RobotMap.intake.set(ControlMode.PercentOutput, 0);
     // }
 
-    if(m_oi.driveStick.getRawButton(5)){  // IN - LB
-      if(RobotMap.solenoidStan.get() == Value.kReverse){ //for ball
-        RobotMap.intakeLeft.set(1);
-        RobotMap.intakeRight.set(-1);
-      }
-      else{
-        RobotMap.intakeLeft.set(-1);   //for hatch
-        RobotMap.intakeRight.set(1);
-      }
+    if(m_oi.driveStick.getRawButton(1)){ //  A --climb
+      RobotMap.solenoidSteve.set(DoubleSolenoid.Value.kForward);
     }
-    else if(m_oi.driveStick.getRawButton(6)){ // OUT - RB
+    else if(m_oi.driveStick.getRawButton(2)){ // B--retract climb
+      RobotMap.solenoidSteve.set(DoubleSolenoid.Value.kReverse);
+    } 
+
+
+    if(m_oi.driveStick.getRawButton(6)){  // IN - LB
       if(RobotMap.solenoidStan.get() == Value.kReverse){ //for ball
         RobotMap.intakeLeft.set(-1);
         RobotMap.intakeRight.set(1);
+        SmartDashboard.putBoolean("Arm Solenoid fired", false);
       }
       else{
         RobotMap.intakeLeft.set(1);   //for hatch
         RobotMap.intakeRight.set(-1);
+        SmartDashboard.putBoolean("Arm Solenoid fired", true);
       }
     }
+    else if(m_oi.driveStick.getRawButton(5)){ // OUT - RB
+      if(RobotMap.solenoidStan.get() == Value.kReverse){ //for ball
+        RobotMap.intakeLeft.set(1);
+        RobotMap.intakeRight.set(-1);
+        SmartDashboard.putBoolean("Arm Solenoid fired", false);
+      }
+      else{
+        RobotMap.intakeLeft.set(-1);   //for hatch
+        RobotMap.intakeRight.set(1);
+        SmartDashboard.putBoolean("Arm Solenoid fired", true);
+      }
+    }
+    else{
+      RobotMap.intakeLeft.set(0);   //off
+      RobotMap.intakeRight.set(0);
+    }
 
-
-    if (m_oi.launchPad.getRawButton(1)) { // MANUAL DOWN
+    if (m_oi.launchPad.getRawButton(1) && !liftRunning.getRunning()) { // MANUAL DOWN
       RobotMap.liftMotor.set(ControlMode.PercentOutput, .3);
-    } else if (m_oi.launchPad.getRawButton(3)) { // MANUAL UP
+    } 
+    else if (m_oi.launchPad.getRawButton(3) && !liftRunning.getRunning()) { // MANUAL UP
       RobotMap.liftMotor.set(ControlMode.PercentOutput, -.3);
-    } else {
+    } 
+    else if (!liftRunning.getRunning()) {
       RobotMap.liftMotor.set(ControlMode.PercentOutput, 0);
     }
 
